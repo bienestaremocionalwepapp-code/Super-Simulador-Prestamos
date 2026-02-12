@@ -301,31 +301,46 @@
         function selectCapital(val) { selectedCapital = parseFloat(val); calcular(); }
 
         function updateDisplay() { }
+function calcular() {
+    // Asegurarnos de que todos sean números reales
+    const capital = Number(selectedCapital);
+    const tasa = Number(selectedInteres) / 100;
+    const meses = Number(selectedMeses);  // ← Aquí es clave: convertir a número
 
-        function calcular() {
-            const capital = selectedCapital;
-            const tasa = selectedInteres / 100;
-            const meses = selectedMeses;
-            const interesTotal = capital * tasa;
-            const totalPrestar = capital + interesTotal;
-            const totalDias = meses * 30;
-            const pagoDiario = totalPrestar / totalDias;
+    // Si algo falta o es inválido, poner 0 y salir
+    if (isNaN(capital) || isNaN(tasa) || isNaN(meses) || meses <= 0) {
+        document.getElementById('totalPrestar').textContent = '$0.00';
+        document.getElementById('pagoDiario').textContent = '$0.00';
+        document.getElementById('totalDias').textContent = '0';
+        document.getElementById('totalInteres').textContent = '$0.00';
+        return;
+    }
 
-            document.getElementById('totalPrestar').textContent = formatMoney(totalPrestar);
-            document.getElementById('pagoDiario').textContent = formatMoney(pagoDiario);
-            document.getElementById('totalDias').textContent = totalDias;
-            document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
+    // Cálculo correcto con 30.1 días por mes (como pediste)
+    const DIAS_POR_MES = 30.1;  // ← Cambiado a 30.1 para precisión
+    const interesTotal = capital * tasa;
+    const totalPrestar = capital + interesTotal;
+    const totalDias = meses * DIAS_POR_MES;
+    const pagoDiario = totalPrestar / totalDias;
 
-            const mensaje = `🔹 *Simulación de Préstamo*
-💰 *Capital:* ${formatMoney(capital)}
+    // Actualizar pantalla
+    document.getElementById('totalPrestar').textContent = formatMoney(totalPrestar);
+    document.getElementById('pagoDiario').textContent = formatMoney(pagoDiario);
+    document.getElementById('totalDias').textContent = totalDias.toFixed(1);  // Mostrar decimal si usa 30.1
+    document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
+
+    // Mensaje WhatsApp actualizado con plazo correcto
+    const mensaje = `🔹 *Simulación de Préstamo*
+💰 *Capital Solicitado:* ${formatMoney(capital)}
 📊 *Interés (${selectedInteres}%):* ${formatMoney(interesTotal)}
-💵 *Total a pagar:* ${formatMoney(totalPrestar)}
-📅 *Plazo:* ${meses} meses (${totalDias} días)
-💳 *Pago diario:* ${formatMoney(pagoDiario)}
-¡Me interesa!`;
-            const url = `https://wa.me/524422580524?text=${encodeURIComponent(mensaje)}`;
-            document.getElementById('whatsappBtn').href = url;
-        }
+💵 *Total a Prestar:* ${formatMoney(totalPrestar)}
+📅 *Plazo:* ${meses} meses (${totalDias.toFixed(1)} días)
+💳 *Pago Diario:* ${formatMoney(pagoDiario)}
+¡Me interesa este préstamo!`;
+
+    const url = `https://wa.me/524424003376?text=${encodeURIComponent(mensaje)}`;
+    document.getElementById('whatsappBtn').href = url;
+}
 
         // Generar QR centrado
         function generateQR() {
