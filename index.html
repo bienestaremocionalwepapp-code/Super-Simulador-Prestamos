@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Préstamos</title>
+    <!-- QR Code library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 500px;
+            width: 100%;
+            padding: 40px;
+        }
+        .header { text-align: center; margin-bottom: 30px; }
+        .header h1 { color: #667eea; font-size: 2em; margin-bottom: 5px; }
+        .header p { color: #666; font-size: 0.95em; }
+        .total-prestar {
+            text-align: center;
+            margin-bottom: 30px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 35px 20px;
+            border-radius: 15px;
+            color: white;
+        }
+        .total-prestar-label { font-size: 1em; opacity: 0.95; margin-bottom: 10px; font-weight: 500; }
+        .total-prestar-value { font-size: 3.5em; font-weight: bold; }
+        .resultados {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+        }
+        .resultado-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .resultado-item:last-child { border-bottom: none; }
+        .resultado-label { font-size: 1em; color: #666; font-weight: 500; }
+        .resultado-value { font-size: 1.3em; color: #667eea; font-weight: bold; }
+        .selectores { margin-bottom: 30px; }
+        .selector-group {
+            margin-bottom: 20px;
+        }
+        .selector-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #667eea;
+        }
+        .selector-group select {
+            width: 100%;
+            padding: 14px;
+            font-size: 1.1em;
+            border: 2px solid #667eea;
+            border-radius: 12px;
+            background: #f0f4ff;
+            color: #333;
+            cursor: pointer;
+        }
+        .selector-group select:focus {
+            outline: none;
+            border-color: #764ba2;
+            box-shadow: 0 0 10px rgba(102,126,234,0.3);
+        }
+        .whatsapp-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 65px;
+            height: 65px;
+            background: #25D366;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.5);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 999;
+            text-decoration: none;
+            animation: pulse 2s infinite;
+        }
+        .whatsapp-btn:hover { transform: scale(1.1); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.6); }
+        .whatsapp-icon { width: 35px; height: 35px; fill: white; }
+        .loading { text-align: center; padding: 40px; color: #667eea; font-size: 1.1em; }
+
+        /* QR centrado */
+        .qr-section {
+            margin-top: 40px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #ddd;
+        }
+        .qr-section h3 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        #qrcode {
+            margin: 20px auto;
+            padding: 10px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .qr-text {
+            font-size: 1.1em;
+            color: #555;
+            margin: 10px 0;
+        }
+        .share-btn {
+            background: #25D366;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            font-size: 1.1em;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 15px;
+            transition: all 0.3s;
+        }
+        .share-btn:hover { background: #128C7E; transform: translateY(-2px); }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 5px 20px rgba(37, 211, 102, 0.5); }
+            50% { box-shadow: 0 5px 30px rgba(37, 211, 102, 0.8); }
+            100% { box-shadow: 0 5px 20px rgba(37, 211, 102, 0.5); }
+        }
+        @media (max-width: 600px) {
+            .container { padding: 25px; }
+            .total-prestar-value { font-size: 2.5em; }
+            .whatsapp-btn { bottom: 20px; right: 20px; width: 55px; height: 55px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💰 Simulador de Préstamos</h1>
+            <p>Calcula tu préstamo en tiempo real</p>
+        </div>
+        <div id="loadingMessage" class="loading">
+            Cargando datos desde Google Sheets...
+        </div>
+        <div id="appContent" style="display: none;">
+            <div class="total-prestar">
+                <div class="total-prestar-label">Monto Total a Prestar</div>
+                <div class="total-prestar-value" id="totalPrestar">$0.00</div>
+            </div>
+            <div class="resultados">
+                <div class="resultado-item">
+                    <span class="resultado-label">Pago Diario</span>
+                    <span class="resultado-value" id="pagoDiario">$0.00</span>
+                </div>
+                <div class="resultado-item">
+                    <span class="resultado-label">Total Días</span>
+                    <span class="resultado-value" id="totalDias">0</span>
+                </div>
+                <div class="resultado-item">
+                    <span class="resultado-label">Total Interés</span>
+                    <span class="resultado-value" id="totalInteres">$0.00</span>
+                </div>
+            </div>
+            <div class="selectores">
+                <div class="selector-group">
+                    <label for="interes">Interés</label>
+                    <select id="interes" onchange="selectInteres(this.value)">
+                        <option value="0">Cargando...</option>
+                    </select>
+                </div>
+                <div class="selector-group">
+                    <label for="meses">Plazo</label>
+                    <select id="meses" onchange="selectMeses(this.value)">
+                        <option value="0">Cargando...</option>
+                    </select>
+                </div>
+                <div class="selector-group">
+                    <label for="capital">Capital</label>
+                    <select id="capital" onchange="selectCapital(this.value)">
+                        <option value="0">Cargando...</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- QR CENTRADO AQUÍ -->
+            <div class="qr-section">
+                <h3>Comparte este simulador</h3>
+                <div style="display: flex; justify-content: center; margin: 20px 0;">
+                    <div id="qrcode"></div>
+                </div>
+                <p class="qr-text">Escanea para abrir en otro celular</p>
+                <button class="share-btn" onclick="shareViaWhatsApp()">Compartir por WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <a href="#" class="whatsapp-btn" id="whatsappBtn" target="_blank">
+        <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+        </svg>
+    </a>
+
+    <script>
+        const SHEET_ID = '19Viesr9Lhy347A9L03J_RuxftUhBduaYsBY206IO6X8';
+
+        let selectedInteres = 0;
+        let selectedMeses = 0;
+        let selectedCapital = 0;
+
+        function formatMoney(num) {
+            return '$' + num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
+        }
+
+        async function loadData() {
+            try {
+                await loadColumnFromSheet('Interes', valores => {
+                    fillSelect('interes', valores, v => v + '%', valores[0]);
+                    selectedInteres = valores[0];
+                });
+
+                await loadColumnFromSheet('Meses', valores => {
+                    fillSelect('meses', valores, v => v + ' meses', valores[0]);
+                    selectedMeses = valores[0];
+                });
+
+                await loadColumnFromSheet('Capital', valores => {
+                    fillSelect('capital', valores, v => formatMoney(v), valores[0]);
+                    selectedCapital = valores[0];
+                });
+
+                updateDisplay();
+                calcular();
+
+                generateQR();  // ← Genera el QR aquí
+
+                document.getElementById('loadingMessage').style.display = 'none';
+                document.getElementById('appContent').style.display = 'block';
+            } catch (err) {
+                document.getElementById('loadingMessage').innerHTML = '❌ Error al cargar<br><button onclick="location.reload()">Reintentar</button>';
+            }
+        }
+
+        async function loadColumnFromSheet(sheetName, callback) {
+            const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${sheetName}`;
+            const response = await fetch(url);
+            if (!response.ok) throw new Error('Error en ' + sheetName);
+
+            const text = await response.text();
+            let jsonStr = text.replace(/^[\s\S]*?setResponse\(/, '').replace(/\);[\s\S]*$/, '');
+            const json = JSON.parse(jsonStr);
+
+            const rows = json.table.rows || [];
+            const valores = [];
+
+            for (let i = 0; i < rows.length; i++) {
+                const valor = rows[i]?.c?.[0]?.v;
+                if (valor != null) {
+                    const num = parseFloat(valor);
+                    if (!isNaN(num)) valores.push(num);
+                }
+            }
+
+            if (valores.length === 0) throw new Error('No datos en ' + sheetName);
+            callback(valores);
+        }
+
+        function fillSelect(id, values, labelFn, defaultVal) {
+            const select = document.getElementById(id);
+            select.innerHTML = '';
+            values.forEach(val => {
+                const opt = document.createElement('option');
+                opt.value = val;
+                opt.textContent = labelFn(val);
+                if (val === defaultVal) opt.selected = true;
+                select.appendChild(opt);
+            });
+        }
+
+        function selectInteres(val) { selectedInteres = parseFloat(val); calcular(); }
+        function selectMeses(val) { selectedMeses = parseFloat(val); calcular(); }
+        function selectCapital(val) { selectedCapital = parseFloat(val); calcular(); }
+
+        function updateDisplay() { }
+
+        function calcular() {
+            const capital = selectedCapital;
+            const tasa = selectedInteres / 100;
+            const meses = selectedMeses;
+            const interesTotal = capital * tasa;
+            const totalPrestar = capital + interesTotal;
+            const totalDias = meses * 30;
+            const pagoDiario = totalPrestar / totalDias;
+
+            document.getElementById('totalPrestar').textContent = formatMoney(totalPrestar);
+            document.getElementById('pagoDiario').textContent = formatMoney(pagoDiario);
+            document.getElementById('totalDias').textContent = totalDias;
+            document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
+
+            const mensaje = `🔹 *Simulación de Préstamo*
+💰 *Capital:* ${formatMoney(capital)}
+📊 *Interés (${selectedInteres}%):* ${formatMoney(interesTotal)}
+💵 *Total a pagar:* ${formatMoney(totalPrestar)}
+📅 *Plazo:* ${meses} meses (${totalDias} días)
+💳 *Pago diario:* ${formatMoney(pagoDiario)}
+¡Me interesa!`;
+            const url = `https://wa.me/524424003376?text=${encodeURIComponent(mensaje)}`;
+            document.getElementById('whatsappBtn').href = url;
+        }
+
+        // Generar QR centrado
+        function generateQR() {
+            const url = window.location.href;
+            new QRCode(document.getElementById("qrcode"), {
+                text: url,
+                width: 220,
+                height: 220,
+                colorDark: "#000000",
+                colorLight: "#ffffff",
+                correctLevel: QRCode.CorrectLevel.H
+            });
+        }
+
+        function shareViaWhatsApp() {
+            const url = window.location.href;
+            const mensaje = `¡Prueba este simulador de préstamos! Abre o escanea: ${url}`;
+            const waUrl = `https://wa.me/?text=${encodeURIComponent(mensaje)}`;
+            window.open(waUrl, '_blank');
+        }
+
+        loadData();
+    </script>
+</body>
+</html>
