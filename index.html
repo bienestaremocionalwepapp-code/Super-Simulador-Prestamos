@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -99,7 +98,7 @@
             animation: colorPulse 0.8s ease-in-out;
         }
 
-        /* Efecto especial para el selector de meses cuando cambia */
+        /* Efecto especial para el selector de días cuando cambia */
         .selector-group select {
             width: 100%;
             padding: 12px;
@@ -261,8 +260,8 @@
                     </select>
                 </div>
                 <div class="selector-group">
-                    <label for="meses">Plazo</label>
-                    <select id="meses">
+                    <label for="dias">Plazo</label>
+                    <select id="dias">
                         <option value="0">Cargando...</option>
                     </select>
                 </div>
@@ -294,15 +293,14 @@
 
     <script>
         const SHEET_ID = '19Viesr9Lhy347A9L03J_RuxftUhBduaYsBY206IO6X8';
-        const DIAS_POR_MES = 30.1;
 
         // Variables globales para los valores seleccionados
         let selectedInteres = 0;
-        let selectedMeses = 0;
+        let selectedDias = 0;
         let selectedCapital = 0;
 
         // Variables para detectar cambios
-        let previousMeses = 0;
+        let previousDias = 0;
         let previousInteres = 0;
 
         function formatMoney(num) {
@@ -343,10 +341,11 @@
                     previousInteres = valores[0];
                 });
 
-                await loadColumnFromSheet('Meses', valores => {
-                    fillSelect('meses', valores, v => v + ' meses', valores[0]);
-                    selectedMeses = valores[0];
-                    previousMeses = valores[0];
+                // CAMBIO: Cargar desde la pestaña "Dias" en lugar de "Meses"
+                await loadColumnFromSheet('Dias', valores => {
+                    fillSelect('dias', valores, v => v + ' días', valores[0]);
+                    selectedDias = valores[0];
+                    previousDias = valores[0];
                 });
 
                 await loadColumnFromSheet('Capital', valores => {
@@ -369,18 +368,18 @@
                     calcular();
                 });
 
-                document.getElementById('meses').addEventListener('change', function() {
-                    selectedMeses = parseFloat(this.value);
-                    console.log('Meses seleccionados:', selectedMeses);
+                // CAMBIO: Event listener para "dias" en lugar de "meses"
+                document.getElementById('dias').addEventListener('change', function() {
+                    selectedDias = parseFloat(this.value);
+                    console.log('Días seleccionados:', selectedDias);
                     
                     // Detectar si cambió el plazo
-                    if (previousMeses !== selectedMeses) {
-                        highlightSelector('meses');
-                        // Animar los 3 elementos afectados
+                    if (previousDias !== selectedDias) {
+                        highlightSelector('dias');
+                        // Animar los elementos afectados
                         highlightElement('totalDias');
-                        setTimeout(() => highlightElement('totalInteres'), 150);
-                        setTimeout(() => highlightElement('pagoDiario'), 300);
-                        previousMeses = selectedMeses;
+                        setTimeout(() => highlightElement('pagoDiario'), 150);
+                        previousDias = selectedDias;
                     }
                     
                     calcular();
@@ -449,16 +448,16 @@
             // Convertir a números y validar
             const capital = Number(selectedCapital);
             const tasaDecimal = Number(selectedInteres) / 100;
-            const meses = Number(selectedMeses);
+            const dias = Number(selectedDias); // CAMBIO: Ahora usamos días directamente
 
             console.log('=== CALCULANDO ===');
             console.log('Capital:', capital);
             console.log('Interés:', selectedInteres + '%', '(', tasaDecimal, ')');
-            console.log('Meses:', meses);
+            console.log('Días:', dias); // CAMBIO: Mostramos días directamente
 
             // Validar que tenemos datos válidos
-            if (isNaN(capital) || isNaN(tasaDecimal) || isNaN(meses) || 
-                capital <= 0 || meses <= 0) {
+            if (isNaN(capital) || isNaN(tasaDecimal) || isNaN(dias) || 
+                capital <= 0 || dias <= 0) {
                 console.warn('Datos inválidos, mostrando ceros');
                 document.getElementById('totalPrestar').textContent = '$0.00';
                 document.getElementById('pagoDiario').textContent = '$0.00';
@@ -470,18 +469,18 @@
             // Realizar cálculos
             const interesTotal = capital * tasaDecimal;
             const totalPrestar = capital + interesTotal;
-            const totalDias = meses * DIAS_POR_MES;
-            const pagoDiario = totalPrestar / totalDias;
+            // CAMBIO: Ya no multiplicamos por DIAS_POR_MES, usamos los días directamente
+            const pagoDiario = totalPrestar / dias;
 
             console.log('Interés Total:', interesTotal);
             console.log('Total a Prestar:', totalPrestar);
-            console.log('Total Días:', totalDias);
+            console.log('Total Días:', dias);
             console.log('Pago Diario:', pagoDiario);
 
             // Actualizar pantalla
             document.getElementById('totalPrestar').textContent = formatMoney(totalPrestar);
             document.getElementById('pagoDiario').textContent = formatMoney(pagoDiario);
-            document.getElementById('totalDias').textContent = totalDias.toFixed(1);
+            document.getElementById('totalDias').textContent = dias; // CAMBIO: Mostramos días sin decimales
             document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
 
             // Actualizar mensaje de WhatsApp
@@ -489,7 +488,7 @@
 💰 *Capital Solicitado:* ${formatMoney(capital)}
 📊 *Interés (${selectedInteres}%):* ${formatMoney(interesTotal)}
 💵 *Total a Prestar:* ${formatMoney(totalPrestar)}
-📅 *Plazo:* ${meses} meses (${totalDias.toFixed(1)} días)
+📅 *Plazo:* ${dias} días
 💳 *Pago Diario:* ${formatMoney(pagoDiario)}
 
 ¡Me interesa este préstamo!`;
