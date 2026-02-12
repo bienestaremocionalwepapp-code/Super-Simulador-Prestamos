@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -98,8 +99,8 @@
             animation: colorPulse 0.8s ease-in-out;
         }
 
-        /* Efecto especial para el selector de días cuando cambia */
-        .selector-group select {
+        /* Efecto especial para el selector cuando cambia */
+        .selector-group select, .selector-group input {
             width: 100%;
             padding: 12px;
             font-size: 1em;
@@ -110,8 +111,12 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
+
+        .selector-group input {
+            cursor: text;
+        }
         
-        .selector-group select:focus {
+        .selector-group select:focus, .selector-group input:focus {
             outline: none;
             border-color: #764ba2;
             box-shadow: 0 0 10px rgba(102,126,234,0.3);
@@ -148,6 +153,58 @@
             font-size: 1em;
             font-weight: 600;
             color: #667eea;
+        }
+
+        /* Opciones de capital */
+        .capital-options {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+        .capital-btn {
+            flex: 1;
+            padding: 8px;
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .capital-btn:hover {
+            background: #667eea;
+            color: white;
+        }
+        .capital-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        /* Input personalizado de capital */
+        .capital-input-wrapper {
+            position: relative;
+        }
+        .capital-input-wrapper input {
+            padding-left: 30px;
+        }
+        .capital-currency {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #667eea;
+            font-weight: bold;
+            pointer-events: none;
+        }
+        .capital-error {
+            color: #FF6B6B;
+            font-size: 0.85em;
+            margin-top: 5px;
+            display: none;
+        }
+        .capital-error.show {
+            display: block;
         }
         
         .whatsapp-btn {
@@ -248,17 +305,15 @@
                     <span class="resultado-value" id="totalDias">0</span>
                 </div>
                 <div class="resultado-item" id="totalInteresItem">
+                    <span class="resultado-label">Interés Aplicado</span>
+                    <span class="resultado-value" id="interesAplicado">0%</span>
+                </div>
+                <div class="resultado-item" id="totalInteresItem">
                     <span class="resultado-label">Total Interés</span>
                     <span class="resultado-value" id="totalInteres">$0.00</span>
                 </div>
             </div>
             <div class="selectores">
-                <div class="selector-group">
-                    <label for="interes">Interés</label>
-                    <select id="interes">
-                        <option value="0">Cargando...</option>
-                    </select>
-                </div>
                 <div class="selector-group">
                     <label for="dias">Plazo</label>
                     <select id="dias">
@@ -266,10 +321,21 @@
                     </select>
                 </div>
                 <div class="selector-group">
-                    <label for="capital">Capital</label>
-                    <select id="capital">
-                        <option value="0">Cargando...</option>
-                    </select>
+                    <label>Capital</label>
+                    <div class="capital-options">
+                        <button class="capital-btn" data-modo="select">De la lista</button>
+                        <button class="capital-btn active" data-modo="input">Personalizado</button>
+                    </div>
+                    <div id="capitalSelectWrapper" style="display: none;">
+                        <select id="capitalSelect">
+                            <option value="0">Cargando...</option>
+                        </select>
+                    </div>
+                    <div id="capitalInputWrapper" class="capital-input-wrapper">
+                        <span class="capital-currency">$</span>
+                        <input type="number" id="capitalInput" placeholder="Ingresa el monto" min="1000" max="50000" step="100" value="5000">
+                        <div class="capital-error" id="capitalError">El capital debe estar entre $1,000 y $50,000</div>
+                    </div>
                 </div>
             </div>
 
@@ -294,14 +360,31 @@
     <script>
         const SHEET_ID = '19Viesr9Lhy347A9L03J_RuxftUhBduaYsBY206IO6X8';
 
+        // ========================================
+        // 📌 CONFIGURACIÓN DE INTERESES POR DÍAS
+        // Modifica estos valores cuando sea necesario
+        // ========================================
+        const INTERES_POR_DIAS = {
+            27: 21.5,   // 27 días = 21.5% de interés
+            40: 32,     // 40 días = 32% de interés
+            54: 44,     // 54 días = 44% de interés
+            68: 49.8    // 68 días = 49.8% de interés
+        };
+
+        // ========================================
+        // 📌 LÍMITES DE CAPITAL
+        // Modifica estos valores cuando sea necesario
+        // ========================================
+        const CAPITAL_MIN = 1000;   // Mínimo $1,000
+        const CAPITAL_MAX = 50000;  // Máximo $50,000
+
         // Variables globales para los valores seleccionados
-        let selectedInteres = 0;
         let selectedDias = 0;
         let selectedCapital = 0;
+        let capitalMode = 'input'; // 'select' o 'input'
 
         // Variables para detectar cambios
         let previousDias = 0;
-        let previousInteres = 0;
 
         function formatMoney(num) {
             return '$' + num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
@@ -311,86 +394,124 @@
         function highlightElement(elementId) {
             const element = document.getElementById(elementId);
             element.classList.remove('highlight-change');
-            void element.offsetWidth; // Forzar reflow
+            void element.offsetWidth;
             element.classList.add('highlight-change');
             
-            // Remover la clase después de la animación
             setTimeout(() => {
                 element.classList.remove('highlight-change');
             }, 800);
         }
 
         // Función para efecto en el selector
-        function highlightSelector(selectorId) {
-            const selector = document.getElementById(selectorId);
-            selector.classList.remove('selector-active');
-            void selector.offsetWidth;
-            selector.classList.add('selector-active');
+        function highlightSelector(element) {
+            element.classList.remove('selector-active');
+            void element.offsetWidth;
+            element.classList.add('selector-active');
             
             setTimeout(() => {
-                selector.classList.remove('selector-active');
+                element.classList.remove('selector-active');
             }, 600);
+        }
+
+        // Validar capital
+        function validarCapital(valor) {
+            const num = parseFloat(valor);
+            if (isNaN(num)) return false;
+            return num >= CAPITAL_MIN && num <= CAPITAL_MAX;
+        }
+
+        // Cambiar modo de capital
+        function setupCapitalModes() {
+            const buttons = document.querySelectorAll('.capital-btn');
+            const selectWrapper = document.getElementById('capitalSelectWrapper');
+            const inputWrapper = document.getElementById('capitalInputWrapper');
+            
+            buttons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    buttons.forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    capitalMode = this.dataset.modo;
+                    
+                    if (capitalMode === 'select') {
+                        selectWrapper.style.display = 'block';
+                        inputWrapper.style.display = 'none';
+                        selectedCapital = parseFloat(document.getElementById('capitalSelect').value);
+                    } else {
+                        selectWrapper.style.display = 'none';
+                        inputWrapper.style.display = 'block';
+                        selectedCapital = parseFloat(document.getElementById('capitalInput').value);
+                    }
+                    
+                    highlightSelector(this);
+                    calcular();
+                });
+            });
         }
 
         async function loadData() {
             try {
-                // Cargar todos los datos primero
-                await loadColumnFromSheet('Interes', valores => {
-                    fillSelect('interes', valores, v => v + '%', valores[0]);
-                    selectedInteres = valores[0];
-                    previousInteres = valores[0];
-                });
-
-                // CAMBIO: Cargar desde la pestaña "Dias" en lugar de "Meses"
+                // Cargar días desde la pestaña "Dias"
                 await loadColumnFromSheet('Dias', valores => {
                     fillSelect('dias', valores, v => v + ' días', valores[0]);
                     selectedDias = valores[0];
                     previousDias = valores[0];
                 });
 
+                // Cargar capital desde la pestaña "Capital"
                 await loadColumnFromSheet('Capital', valores => {
-                    fillSelect('capital', valores, v => formatMoney(v), valores[0]);
-                    selectedCapital = valores[0];
+                    fillSelect('capitalSelect', valores, v => formatMoney(v), valores[0]);
                 });
 
-                // Agregar event listeners DESPUÉS de llenar los selectores
-                document.getElementById('interes').addEventListener('change', function() {
-                    selectedInteres = parseFloat(this.value);
-                    console.log('Interés seleccionado:', selectedInteres);
-                    
-                    // Detectar si cambió el interés
-                    if (previousInteres !== selectedInteres) {
-                        highlightSelector('interes');
-                        highlightElement('totalInteres');
-                        previousInteres = selectedInteres;
-                    }
-                    
-                    calcular();
-                });
+                // Setup modos de capital
+                setupCapitalModes();
 
-                // CAMBIO: Event listener para "dias" en lugar de "meses"
+                // Event listener para días
                 document.getElementById('dias').addEventListener('change', function() {
                     selectedDias = parseFloat(this.value);
                     console.log('Días seleccionados:', selectedDias);
                     
-                    // Detectar si cambió el plazo
                     if (previousDias !== selectedDias) {
-                        highlightSelector('dias');
-                        // Animar los elementos afectados
+                        highlightSelector(this);
                         highlightElement('totalDias');
-                        setTimeout(() => highlightElement('pagoDiario'), 150);
+                        highlightElement('interesAplicado');
+                        setTimeout(() => highlightElement('totalInteres'), 150);
+                        setTimeout(() => highlightElement('pagoDiario'), 300);
                         previousDias = selectedDias;
                     }
                     
                     calcular();
                 });
 
-                document.getElementById('capital').addEventListener('change', function() {
+                // Event listener para capital select
+                document.getElementById('capitalSelect').addEventListener('change', function() {
                     selectedCapital = parseFloat(this.value);
-                    console.log('Capital seleccionado:', selectedCapital);
-                    highlightSelector('capital');
+                    console.log('Capital seleccionado (lista):', selectedCapital);
+                    highlightSelector(this);
                     calcular();
                 });
+
+                // Event listener para capital input
+                const capitalInput = document.getElementById('capitalInput');
+                const capitalError = document.getElementById('capitalError');
+                
+                capitalInput.addEventListener('input', function() {
+                    const valor = parseFloat(this.value);
+                    
+                    if (validarCapital(valor)) {
+                        selectedCapital = valor;
+                        capitalError.classList.remove('show');
+                        this.style.borderColor = '#667eea';
+                        highlightSelector(this);
+                        calcular();
+                    } else {
+                        capitalError.classList.add('show');
+                        this.style.borderColor = '#FF6B6B';
+                    }
+                });
+
+                // Establecer valor inicial del input
+                selectedCapital = parseFloat(capitalInput.value);
 
                 // Calcular con los valores iniciales
                 calcular();
@@ -445,48 +566,64 @@
         }
 
         function calcular() {
-            // Convertir a números y validar
             const capital = Number(selectedCapital);
-            const tasaDecimal = Number(selectedInteres) / 100;
-            const dias = Number(selectedDias); // CAMBIO: Ahora usamos días directamente
+            const dias = Number(selectedDias);
 
             console.log('=== CALCULANDO ===');
             console.log('Capital:', capital);
-            console.log('Interés:', selectedInteres + '%', '(', tasaDecimal, ')');
-            console.log('Días:', dias); // CAMBIO: Mostramos días directamente
+            console.log('Días:', dias);
+
+            // Validar capital
+            if (!validarCapital(capital)) {
+                console.warn('Capital fuera de rango');
+                return;
+            }
 
             // Validar que tenemos datos válidos
-            if (isNaN(capital) || isNaN(tasaDecimal) || isNaN(dias) || 
-                capital <= 0 || dias <= 0) {
+            if (isNaN(capital) || isNaN(dias) || capital <= 0 || dias <= 0) {
                 console.warn('Datos inválidos, mostrando ceros');
                 document.getElementById('totalPrestar').textContent = '$0.00';
                 document.getElementById('pagoDiario').textContent = '$0.00';
                 document.getElementById('totalDias').textContent = '0';
+                document.getElementById('interesAplicado').textContent = '0%';
                 document.getElementById('totalInteres').textContent = '$0.00';
                 return;
             }
 
+            // ========================================
+            // 📌 OBTENER INTERÉS SEGÚN DÍAS
+            // ========================================
+            const interesPorc = INTERES_POR_DIAS[dias];
+            
+            if (interesPorc === undefined) {
+                console.error('No hay interés definido para', dias, 'días');
+                alert('Error: No hay tasa de interés configurada para ' + dias + ' días');
+                return;
+            }
+
+            const tasaDecimal = interesPorc / 100;
+            console.log('Interés aplicado:', interesPorc + '%', '(', tasaDecimal, ')');
+
             // Realizar cálculos
             const interesTotal = capital * tasaDecimal;
             const totalPrestar = capital + interesTotal;
-            // CAMBIO: Ya no multiplicamos por DIAS_POR_MES, usamos los días directamente
             const pagoDiario = totalPrestar / dias;
 
             console.log('Interés Total:', interesTotal);
             console.log('Total a Prestar:', totalPrestar);
-            console.log('Total Días:', dias);
             console.log('Pago Diario:', pagoDiario);
 
             // Actualizar pantalla
             document.getElementById('totalPrestar').textContent = formatMoney(totalPrestar);
             document.getElementById('pagoDiario').textContent = formatMoney(pagoDiario);
-            document.getElementById('totalDias').textContent = dias; // CAMBIO: Mostramos días sin decimales
+            document.getElementById('totalDias').textContent = dias;
+            document.getElementById('interesAplicado').textContent = interesPorc + '%';
             document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
 
             // Actualizar mensaje de WhatsApp
             const mensaje = `🔹 *Simulación de Préstamo*
 💰 *Capital Solicitado:* ${formatMoney(capital)}
-📊 *Interés (${selectedInteres}%):* ${formatMoney(interesTotal)}
+📊 *Interés (${interesPorc}%):* ${formatMoney(interesTotal)}
 💵 *Total a Prestar:* ${formatMoney(totalPrestar)}
 📅 *Plazo:* ${dias} días
 💳 *Pago Diario:* ${formatMoney(pagoDiario)}
