@@ -24,6 +24,7 @@
             max-width: 500px;
             width: 100%;
             padding: 25px;
+            margin: 20px auto;
         }
         .header { 
             text-align: center; 
@@ -64,41 +65,16 @@
             transition: all 0.4s ease;
         }
 
-        /* Animación de cambio - parpadeo con colores */
         @keyframes colorPulse {
-            0% { 
-                background: transparent;
-                transform: scale(1);
-            }
-            25% { 
-                background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%);
-                transform: scale(1.05);
-                color: white;
-                border-radius: 8px;
-                padding: 5px 10px;
-            }
-            50% { 
-                background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
-                transform: scale(1.08);
-                color: white;
-            }
-            75% { 
-                background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%);
-                transform: scale(1.05);
-                color: white;
-            }
-            100% { 
-                background: transparent;
-                transform: scale(1);
-                color: #667eea;
-            }
+            0% { background: transparent; transform: scale(1); }
+            25% { background: linear-gradient(135deg, #FFD700 0%, #FFA500 100%); transform: scale(1.05); color: white; border-radius: 8px; padding: 5px 10px; }
+            50% { background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%); transform: scale(1.08); color: white; }
+            75% { background: linear-gradient(135deg, #4ECDC4 0%, #44A08D 100%); transform: scale(1.05); color: white; }
+            100% { background: transparent; transform: scale(1); color: #667eea; }
         }
 
-        .highlight-change {
-            animation: colorPulse 0.8s ease-in-out;
-        }
+        .highlight-change { animation: colorPulse 0.8s ease-in-out; }
 
-        /* Efecto especial para el selector cuando cambia */
         .selector-group select, .selector-group input {
             width: 100%;
             padding: 12px;
@@ -111,9 +87,7 @@
             transition: all 0.3s ease;
         }
 
-        .selector-group input {
-            cursor: text;
-        }
+        .selector-group input { cursor: text; }
         
         .selector-group select:focus, .selector-group input:focus {
             outline: none;
@@ -121,31 +95,16 @@
             box-shadow: 0 0 10px rgba(102,126,234,0.3);
         }
 
-        .selector-active {
-            animation: selectorGlow 0.6s ease;
-        }
+        .selector-active { animation: selectorGlow 0.6s ease; }
 
         @keyframes selectorGlow {
-            0% { 
-                border-color: #667eea;
-                box-shadow: 0 0 0px rgba(102,126,234,0.3);
-            }
-            50% { 
-                border-color: #FF6B6B;
-                box-shadow: 0 0 25px rgba(255,107,107,0.6);
-                transform: scale(1.02);
-            }
-            100% { 
-                border-color: #667eea;
-                box-shadow: 0 0 10px rgba(102,126,234,0.3);
-                transform: scale(1);
-            }
+            0% { border-color: #667eea; box-shadow: 0 0 0px rgba(102,126,234,0.3); }
+            50% { border-color: #FF6B6B; box-shadow: 0 0 25px rgba(255,107,107,0.6); transform: scale(1.02); }
+            100% { border-color: #667eea; box-shadow: 0 0 10px rgba(102,126,234,0.3); transform: scale(1); }
         }
 
         .selectores { margin-bottom: 20px; }
-        .selector-group {
-            margin-bottom: 12px;
-        }
+        .selector-group { margin-bottom: 12px; }
         .selector-group label {
             display: block;
             margin-bottom: 5px;
@@ -154,7 +113,6 @@
             color: #667eea;
         }
 
-        /* Opciones de capital */
         .capital-options {
             display: flex;
             gap: 8px;
@@ -171,22 +129,11 @@
             cursor: pointer;
             transition: all 0.3s ease;
         }
-        .capital-btn:hover {
-            background: #667eea;
-            color: white;
-        }
-        .capital-btn.active {
-            background: #667eea;
-            color: white;
-        }
+        .capital-btn:hover { background: #667eea; color: white; }
+        .capital-btn.active { background: #667eea; color: white; }
 
-        /* Input personalizado de capital */
-        .capital-input-wrapper {
-            position: relative;
-        }
-        .capital-input-wrapper input {
-            padding-left: 30px;
-        }
+        .capital-input-wrapper { position: relative; }
+        .capital-input-wrapper input { padding-left: 30px; }
         .capital-currency {
             position: absolute;
             left: 15px;
@@ -202,11 +149,8 @@
             margin-top: 5px;
             display: none;
         }
-        .capital-error.show {
-            display: block;
-        }
+        .capital-error.show { display: block; }
 
-        /* Sección de datos del cliente */
         .cliente-section {
             background: #f8f9fa;
             padding: 15px;
@@ -220,9 +164,7 @@
             font-size: 1.1em;
             text-align: center;
         }
-        .cliente-input-group {
-            margin-bottom: 10px;
-        }
+        .cliente-input-group { margin-bottom: 10px; }
         .cliente-input-group label {
             display: block;
             margin-bottom: 5px;
@@ -243,18 +185,143 @@
             border-color: #667eea;
             box-shadow: 0 0 8px rgba(102,126,234,0.2);
         }
-        .cliente-input-group input.error {
-            border-color: #FF6B6B;
-        }
+        .cliente-input-group input.error { border-color: #FF6B6B; }
         .input-error-msg {
             color: #FF6B6B;
             font-size: 0.8em;
             margin-top: 3px;
             display: none;
         }
-        .input-error-msg.show {
-            display: block;
+        .input-error-msg.show { display: block; }
+
+        /* 🆕 Botón para mostrar campos opcionales */
+        .toggle-optional-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f0f4ff;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
         }
+        .toggle-optional-btn:hover {
+            background: #e0ebff;
+            border-color: #764ba2;
+        }
+        .toggle-optional-btn.active {
+            background: #667eea;
+            color: white;
+            border-style: solid;
+        }
+
+        /* Sección opcional (oculta por defecto) */
+        .optional-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+        }
+        .optional-section.show {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
+        /* 🆕 Estilos para inputs de archivo (fotos) */
+        .file-input-wrapper {
+            position: relative;
+            margin-top: 8px;
+        }
+        .file-input-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 12px;
+            background: #f0f4ff;
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9em;
+            color: #667eea;
+            font-weight: 600;
+        }
+        .file-input-label:hover {
+            background: #e0ebff;
+            border-color: #764ba2;
+        }
+        .file-input-label.has-file {
+            background: #d4edda;
+            border-color: #28a745;
+            border-style: solid;
+            color: #155724;
+        }
+        .file-input {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .file-preview {
+            margin-top: 8px;
+            display: none;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .file-preview.show { display: block; }
+        .file-preview img {
+            width: 100%;
+            max-height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        /* 🆕 Botón de ubicación */
+        .location-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        .location-btn:hover {
+            background: #e0ebff;
+            border-color: #764ba2;
+        }
+        .location-btn.active {
+            background: #28a745;
+            border-color: #28a745;
+            color: white;
+        }
+        .location-btn:disabled {
+            background: #e0e0e0;
+            border-color: #ccc;
+            color: #999;
+            cursor: not-allowed;
+        }
+        .location-info {
+            font-size: 0.8em;
+            color: #666;
+            margin-top: 5px;
+            display: none;
+        }
+        .location-info.show { display: block; }
         
         .whatsapp-btn {
             width: 100%;
@@ -287,7 +354,6 @@
         .whatsapp-icon { width: 24px; height: 24px; fill: white; }
         .loading { text-align: center; padding: 40px; color: #667eea; font-size: 1.1em; }
 
-        /* QR centrado */
         .qr-section {
             margin-top: 20px;
             padding: 20px;
@@ -326,7 +392,6 @@
         }
         .share-btn:hover { background: #764ba2; transform: translateY(-2px); }
 
-        /* Toast notification */
         .toast {
             position: fixed;
             bottom: 20px;
@@ -341,21 +406,11 @@
             z-index: 1000;
             animation: slideUp 0.3s ease;
         }
-        .toast.show {
-            display: block;
-        }
-        .toast.error {
-            background: #FF6B6B;
-        }
+        .toast.show { display: block; }
+        .toast.error { background: #FF6B6B; }
         @keyframes slideUp {
-            from {
-                transform: translateX(-50%) translateY(100px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(-50%) translateY(0);
-                opacity: 1;
-            }
+            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
 
         @media (max-width: 600px) {
@@ -384,15 +439,15 @@
                     <span class="resultado-label">Pago Diario</span>
                     <span class="resultado-value" id="pagoDiario">$0.00</span>
                 </div>
-                <div class="resultado-item" id="totalDiasItem">
+                <div class="resultado-item">
                     <span class="resultado-label">Total Días</span>
                     <span class="resultado-value" id="totalDias">0</span>
                 </div>
-                <div class="resultado-item" id="totalInteresItem">
+                <div class="resultado-item">
                     <span class="resultado-label">Interés Aplicado</span>
                     <span class="resultado-value" id="interesAplicado">0%</span>
                 </div>
-                <div class="resultado-item" id="totalInteresItem">
+                <div class="resultado-item">
                     <span class="resultado-label">Total Interés</span>
                     <span class="resultado-value" id="totalInteres">$0.00</span>
                 </div>
@@ -423,7 +478,7 @@
                 </div>
             </div>
 
-            <!-- NUEVA SECCIÓN: Datos del Cliente -->
+            <!-- Datos Básicos del Cliente (Obligatorios) -->
             <div class="cliente-section">
                 <h3>📋 Tus Datos</h3>
                 <div class="cliente-input-group">
@@ -438,6 +493,59 @@
                 </div>
             </div>
 
+            <!-- 🆕 BOTÓN PARA MOSTRAR CAMPOS OPCIONALES -->
+            <button type="button" class="toggle-optional-btn" id="toggleOptionalBtn" onclick="toggleOptionalFields()">
+                <span id="toggleIcon">➕</span>
+                <span id="toggleText">Agregar documentos y ubicación (opcional)</span>
+            </button>
+
+            <!-- 🆕 SECCIÓN OPCIONAL (Fotos + Ubicación) -->
+            <div class="optional-section" id="optionalSection">
+                <div class="cliente-section">
+                    <h3>📄 Documentos Opcionales</h3>
+                    
+                    <!-- Foto de Identificación -->
+                    <div class="cliente-input-group">
+                        <label>📷 Identificación Oficial</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="fotoINE" class="file-input" accept="image/*" capture="environment">
+                            <label for="fotoINE" class="file-input-label" id="labelINE">
+                                <span>📸</span>
+                                <span>Tomar/Subir Foto de INE</span>
+                            </label>
+                        </div>
+                        <div class="file-preview" id="previewINE">
+                            <img id="imgINE" src="" alt="Vista previa INE">
+                        </div>
+                    </div>
+
+                    <!-- Comprobante de Domicilio -->
+                    <div class="cliente-input-group">
+                        <label>🏠 Comprobante de Domicilio</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="fotoComprobante" class="file-input" accept="image/*" capture="environment">
+                            <label for="fotoComprobante" class="file-input-label" id="labelComprobante">
+                                <span>📸</span>
+                                <span>Tomar/Subir Comprobante</span>
+                            </label>
+                        </div>
+                        <div class="file-preview" id="previewComprobante">
+                            <img id="imgComprobante" src="" alt="Vista previa Comprobante">
+                        </div>
+                    </div>
+
+                    <!-- Botón de Ubicación -->
+                    <div class="cliente-input-group">
+                        <label>📍 Ubicación</label>
+                        <button type="button" class="location-btn" id="btnUbicacion">
+                            <span>📍</span>
+                            <span id="locationBtnText">Compartir mi ubicación</span>
+                        </button>
+                        <div class="location-info" id="locationInfo"></div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Botón de WhatsApp -->
             <button class="whatsapp-btn" id="whatsappBtn" onclick="enviarWhatsApp()">
                 <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -446,7 +554,7 @@
                 Enviar por WhatsApp
             </button>
 
-            <!-- QR CENTRADO AQUÍ -->
+            <!-- QR -->
             <div class="qr-section">
                 <h3>Comparte este simulador</h3>
                 <div style="display: flex; justify-content: center; margin: 15px 0;">
@@ -458,15 +566,12 @@
         </div>
     </div>
 
-    <!-- Toast de notificación -->
     <div class="toast" id="toast"></div>
 
     <script>
         const SHEET_ID = '19Viesr9Lhy347A9L03J_RuxftUhBduaYsBY206IO6X8';
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFDUZfLq7OUmXscjPFC2vX28qlHxKPQTpTRkKOeLamS8zy5eAEe0xBjEmkZA1mPLlhwQ/exec';
 
-        // ========================================
-        // 📌 CONFIGURACIÓN DE INTERESES POR DÍAS
-        // ========================================
         const INTERES_POR_DIAS = {
             27: 21.5,   
             40: 32,     
@@ -474,19 +579,20 @@
             68: 49.8    
         };
 
-        // ========================================
-        // 📌 LÍMITES DE CAPITAL
-        // ========================================
         const CAPITAL_MIN = 1000;
         const CAPITAL_MAX = 50000;
 
-        // Variables globales
         let selectedDias = 0;
         let selectedCapital = 0;
         let capitalMode = 'input';
         let previousDias = 0;
 
-        // Variables de cálculo actual
+        // 🆕 Variables para campos opcionales
+        let fotoINEData = null;
+        let fotoComprobanteData = null;
+        let ubicacionData = null;
+        let optionalFieldsVisible = false;
+
         let currentCalculation = {
             nombre: '',
             telefono: '',
@@ -508,20 +614,14 @@
             element.classList.remove('highlight-change');
             void element.offsetWidth;
             element.classList.add('highlight-change');
-            
-            setTimeout(() => {
-                element.classList.remove('highlight-change');
-            }, 800);
+            setTimeout(() => element.classList.remove('highlight-change'), 800);
         }
 
         function highlightSelector(element) {
             element.classList.remove('selector-active');
             void element.offsetWidth;
             element.classList.add('selector-active');
-            
-            setTimeout(() => {
-                element.classList.remove('selector-active');
-            }, 600);
+            setTimeout(() => element.classList.remove('selector-active'), 600);
         }
 
         function validarCapital(valor) {
@@ -543,10 +643,148 @@
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = 'toast show' + (isError ? ' error' : '');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // 🆕 Función para mostrar/ocultar campos opcionales
+        function toggleOptionalFields() {
+            optionalFieldsVisible = !optionalFieldsVisible;
+            const section = document.getElementById('optionalSection');
+            const btn = document.getElementById('toggleOptionalBtn');
+            const icon = document.getElementById('toggleIcon');
+            const text = document.getElementById('toggleText');
             
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
+            if (optionalFieldsVisible) {
+                section.classList.add('show');
+                btn.classList.add('active');
+                icon.textContent = '➖';
+                text.textContent = 'Ocultar documentos y ubicación';
+            } else {
+                section.classList.remove('show');
+                btn.classList.remove('active');
+                icon.textContent = '➕';
+                text.textContent = 'Agregar documentos y ubicación (opcional)';
+            }
+        }
+
+        // 🆕 Función para convertir imagen a Base64
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+        }
+
+        // 🆕 Setup para inputs de archivo
+        function setupFileInputs() {
+            // Foto INE
+            document.getElementById('fotoINE').addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                const label = document.getElementById('labelINE');
+                const preview = document.getElementById('previewINE');
+                const img = document.getElementById('imgINE');
+                
+                if (file) {
+                    try {
+                        fotoINEData = await fileToBase64(file);
+                        img.src = fotoINEData;
+                        preview.classList.add('show');
+                        label.classList.add('has-file');
+                        label.innerHTML = '<span>✅</span><span>INE cargada</span>';
+                        showToast('✅ INE cargada correctamente', false);
+                    } catch (error) {
+                        showToast('❌ Error al cargar la imagen', true);
+                    }
+                }
+            });
+
+            // Foto Comprobante
+            document.getElementById('fotoComprobante').addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                const label = document.getElementById('labelComprobante');
+                const preview = document.getElementById('previewComprobante');
+                const img = document.getElementById('imgComprobante');
+                
+                if (file) {
+                    try {
+                        fotoComprobanteData = await fileToBase64(file);
+                        img.src = fotoComprobanteData;
+                        preview.classList.add('show');
+                        label.classList.add('has-file');
+                        label.innerHTML = '<span>✅</span><span>Comprobante cargado</span>';
+                        showToast('✅ Comprobante cargado correctamente', false);
+                    } catch (error) {
+                        showToast('❌ Error al cargar la imagen', true);
+                    }
+                }
+            });
+        }
+
+        // 🆕 Setup para botón de ubicación
+        function setupLocationButton() {
+            document.getElementById('btnUbicacion').addEventListener('click', function() {
+                const btn = this;
+                const btnText = document.getElementById('locationBtnText');
+                const locationInfo = document.getElementById('locationInfo');
+                
+                if (!navigator.geolocation) {
+                    showToast('❌ Tu navegador no soporta geolocalización', true);
+                    return;
+                }
+                
+                btn.disabled = true;
+                btnText.textContent = 'Obteniendo ubicación...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        ubicacionData = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                        
+                        // Obtener dirección aproximada
+                        try {
+                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${ubicacionData.lat}&lon=${ubicacionData.lng}&format=json`);
+                            const data = await response.json();
+                            ubicacionData.direccion = data.display_name || 'Dirección no disponible';
+                        } catch (error) {
+                            ubicacionData.direccion = `Lat: ${ubicacionData.lat.toFixed(6)}, Lng: ${ubicacionData.lng.toFixed(6)}`;
+                        }
+                        
+                        btn.classList.add('active');
+                        btnText.textContent = '✅ Ubicación obtenida';
+                        locationInfo.textContent = `📍 ${ubicacionData.direccion}`;
+                        locationInfo.classList.add('show');
+                        btn.disabled = false;
+                        
+                        showToast('✅ Ubicación obtenida correctamente', false);
+                    },
+                    (error) => {
+                        btn.disabled = false;
+                        btnText.textContent = 'Compartir mi ubicación';
+                        
+                        let mensaje = '';
+                        switch(error.code) {
+                            case error.PERMISSION_DENIED:
+                                mensaje = '❌ Permiso de ubicación denegado';
+                                break;
+                            case error.POSITION_UNAVAILABLE:
+                                mensaje = '❌ Ubicación no disponible';
+                                break;
+                            case error.TIMEOUT:
+                                mensaje = '❌ Tiempo de espera agotado';
+                                break;
+                            default:
+                                mensaje = '❌ Error al obtener ubicación';
+                        }
+                        
+                        showToast(mensaje, true);
+                    }
+                );
+            });
         }
 
         function setupCapitalModes() {
@@ -590,10 +828,11 @@
                 });
 
                 setupCapitalModes();
+                setupFileInputs();
+                setupLocationButton();
 
                 document.getElementById('dias').addEventListener('change', function() {
                     selectedDias = parseFloat(this.value);
-                    
                     if (previousDias !== selectedDias) {
                         highlightSelector(this);
                         highlightElement('totalDias');
@@ -602,7 +841,6 @@
                         setTimeout(() => highlightElement('pagoDiario'), 300);
                         previousDias = selectedDias;
                     }
-                    
                     calcular();
                 });
 
@@ -617,7 +855,6 @@
                 
                 capitalInput.addEventListener('input', function() {
                     const valor = parseFloat(this.value);
-                    
                     if (validarCapital(valor)) {
                         selectedCapital = valor;
                         capitalError.classList.remove('show');
@@ -630,7 +867,6 @@
                     }
                 });
 
-                // Validación de nombre
                 document.getElementById('nombreCliente').addEventListener('input', function() {
                     const errorMsg = document.getElementById('nombreError');
                     if (validarNombre(this.value)) {
@@ -642,11 +878,8 @@
                     }
                 });
 
-                // Validación de teléfono
                 document.getElementById('telefonoCliente').addEventListener('input', function() {
-                    // Solo permitir números
                     this.value = this.value.replace(/\D/g, '');
-                    
                     const errorMsg = document.getElementById('telefonoError');
                     if (validarTelefono(this.value)) {
                         this.classList.remove('error');
@@ -710,11 +943,7 @@
             const capital = Number(selectedCapital);
             const dias = Number(selectedDias);
 
-            if (!validarCapital(capital)) {
-                return;
-            }
-
-            if (isNaN(capital) || isNaN(dias) || capital <= 0 || dias <= 0) {
+            if (!validarCapital(capital) || isNaN(capital) || isNaN(dias) || capital <= 0 || dias <= 0) {
                 document.getElementById('totalPrestar').textContent = '$0.00';
                 document.getElementById('pagoDiario').textContent = '$0.00';
                 document.getElementById('totalDias').textContent = '0';
@@ -736,7 +965,6 @@
             const totalPrestar = capital + interesTotal;
             const pagoDiario = totalPrestar / dias;
 
-            // Guardar cálculo actual
             currentCalculation = {
                 capital: capital,
                 dias: dias,
@@ -754,21 +982,12 @@
             document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
         }
 
-        // ========================================
-        // 🆕 FUNCIÓN PARA ENVIAR A GOOGLE SHEETS
-        // ========================================
         async function guardarEnGoogleSheets(datos) {
             try {
-                // URL del Google Apps Script Web App
-                // IMPORTANTE: Debes crear este script (lo explico abajo)
-                const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFDUZfLq7OUmXscjPFC2vX28qlHxKPQTpTRkKOeLamS8zy5eAEe0xBjEmkZA1mPLlhwQ/exec';
-                
                 const response = await fetch(SCRIPT_URL, {
                     method: 'POST',
                     mode: 'no-cors',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(datos)
                 });
 
@@ -780,34 +999,29 @@
             }
         }
 
-        // ========================================
-        // 🆕 FUNCIÓN PARA ENVIAR POR WHATSAPP
-        // ========================================
         async function enviarWhatsApp() {
             const nombre = document.getElementById('nombreCliente').value.trim();
             const telefono = document.getElementById('telefonoCliente').value.trim();
 
-            // Validar nombre
+            // Validar campos obligatorios
             if (!validarNombre(nombre)) {
                 showToast('❌ Por favor ingresa tu nombre completo', true);
                 document.getElementById('nombreCliente').focus();
                 return;
             }
 
-            // Validar teléfono
             if (!validarTelefono(telefono)) {
                 showToast('❌ Ingresa un teléfono válido de 10 dígitos', true);
                 document.getElementById('telefonoCliente').focus();
                 return;
             }
 
-            // Validar que haya cálculo
             if (currentCalculation.totalPrestar === 0) {
                 showToast('❌ Primero configura tu préstamo', true);
                 return;
             }
 
-            // Preparar datos para enviar
+            // Preparar datos para guardar (campos opcionales pueden estar vacíos)
             const datosParaGuardar = {
                 fecha: currentCalculation.fecha,
                 nombre: nombre,
@@ -817,14 +1031,20 @@
                 interesPorc: currentCalculation.interesPorc,
                 interesTotal: currentCalculation.interesTotal,
                 totalPrestar: currentCalculation.totalPrestar,
-                pagoDiario: currentCalculation.pagoDiario
+                pagoDiario: currentCalculation.pagoDiario,
+                // 🆕 Campos opcionales
+                fotoINE: fotoINEData || '',
+                fotoComprobante: fotoComprobanteData || '',
+                latitud: ubicacionData ? ubicacionData.lat : '',
+                longitud: ubicacionData ? ubicacionData.lng : '',
+                direccion: ubicacionData ? ubicacionData.direccion : ''
             };
 
-            // Guardar en Google Sheets (en segundo plano)
+            // Guardar en Google Sheets
             guardarEnGoogleSheets(datosParaGuardar);
 
             // Crear mensaje de WhatsApp
-            const mensaje = `🔹 *Simulación de Préstamo*
+            let mensaje = `🔹 *Simulación de Préstamo*
 
 👤 *Nombre:* ${nombre}
 📱 *Teléfono:* ${telefono}
@@ -833,15 +1053,26 @@
 📊 *Interés (${currentCalculation.interesPorc}%):* ${formatMoney(currentCalculation.interesTotal)}
 💵 *Total a Prestar:* ${formatMoney(currentCalculation.totalPrestar)}
 📅 *Plazo:* ${currentCalculation.dias} días
-💳 *Pago Diario:* ${formatMoney(currentCalculation.pagoDiario)}
+💳 *Pago Diario:* ${formatMoney(currentCalculation.pagoDiario)}`;
 
-¡Me interesa este préstamo!`;
+            // Agregar ubicación si existe
+            if (ubicacionData) {
+                mensaje += `\n\n📍 *Ubicación:* ${ubicacionData.direccion}\n🗺️ *Mapa:* https://www.google.com/maps?q=${ubicacionData.lat},${ubicacionData.lng}`;
+            }
+
+            // Agregar nota sobre documentos si existen
+            if (fotoINEData || fotoComprobanteData) {
+                mensaje += '\n\n✅ *Documentos adjuntos:*';
+                if (fotoINEData) mensaje += '\n- Identificación oficial ✓';
+                if (fotoComprobanteData) mensaje += '\n- Comprobante de domicilio ✓';
+            }
+
+            mensaje += '\n\n¡Me interesa este préstamo!';
 
             const url = `https://wa.me/5214422580524?text=${encodeURIComponent(mensaje)}`;
             
             showToast('✅ Abriendo WhatsApp...', false);
             
-            // Abrir WhatsApp
             setTimeout(() => {
                 window.open(url, '_blank');
             }, 500);
