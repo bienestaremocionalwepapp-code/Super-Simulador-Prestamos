@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador de Préstamos</title>
-    <!-- QR Code library -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -33,7 +32,6 @@
         .header h1 { color: #667eea; font-size: 1.8em; margin-bottom: 3px; }
         .header p { color: #666; font-size: 0.9em; }
         
-        /* 🆕 POPUP ANIMADO SIMPLE */
         .total-prestar {
             position: relative;
             text-align: center;
@@ -71,7 +69,6 @@
             padding: 0 10px;
         }
         
-        /* Animación de popup */
         @keyframes popupBounce {
             0% {
                 transform: scale(0.8);
@@ -90,7 +87,6 @@
             animation: popupBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
         }
 
-        /* 🆕 BANNER DE CONSEJO FINANCIERO */
         .consejo-banner {
             background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
             padding: 15px 15px;
@@ -279,43 +275,6 @@
         }
         .input-error-msg.show { display: block; }
 
-        .toggle-optional-btn {
-            width: 100%;
-            padding: 12px;
-            background: #f0f4ff;
-            border: 2px dashed #667eea;
-            border-radius: 12px;
-            color: #667eea;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .toggle-optional-btn:hover {
-            background: #e0ebff;
-            border-color: #764ba2;
-        }
-        .toggle-optional-btn.active {
-            background: #667eea;
-            color: white;
-            border-style: solid;
-        }
-
-        .optional-section {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.5s ease, opacity 0.5s ease;
-            opacity: 0;
-        }
-        .optional-section.show {
-            max-height: 2000px;
-            opacity: 1;
-        }
-
         .file-input-wrapper {
             position: relative;
             margin-top: 8px;
@@ -494,6 +453,102 @@
             to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
 
+        /* NUEVO: MODAL DE CAPTURA DE DATOS */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            z-index: 10000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(45, 42, 61, 0.95);
+            backdrop-filter: blur(8px);
+            overflow-y: auto;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-box {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 25px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.4s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-50px) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .modal-box h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.5em;
+            text-align: center;
+        }
+
+        .modal-box p {
+            color: #666;
+            margin-bottom: 20px;
+            text-align: center;
+            font-size: 0.95em;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn-skip {
+            flex: 1;
+            padding: 12px;
+            background: #e0e0e0;
+            border: none;
+            border-radius: 12px;
+            color: #666;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-skip:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-continue {
+            flex: 1;
+            padding: 12px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-continue:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
         @media (max-width: 600px) {
             .container { padding: 20px; }
             .total-prestar-value { font-size: 2.3em; }
@@ -517,7 +572,6 @@
                 <div class="popup-value" id="popupValue">$0.00</div>
             </div>
 
-            <!-- 🆕 Banner de Consejo Financiero -->
             <div class="consejo-banner">
                 <div class="consejo-text">
                     ⚠️ Consejo Financiero !!! No te endeudes si no es necesario, existen empresas que se aprovechan de tu necesidad para después apropiarse de tus bienes con juicios absurdos !!! ⚠️
@@ -568,68 +622,6 @@
                 </div>
             </div>
 
-            <div class="cliente-section">
-                <h3>📋 Tus Datos</h3>
-                <div class="cliente-input-group">
-                    <label for="nombreCliente">Nombre Completo *</label>
-                    <input type="text" id="nombreCliente" placeholder="Ej: Juan Pérez García" required>
-                    <div class="input-error-msg" id="nombreError">Por favor ingresa tu nombre</div>
-                </div>
-                <div class="cliente-input-group">
-                    <label for="telefonoCliente">Teléfono (10 dígitos) *</label>
-                    <input type="tel" id="telefonoCliente" placeholder="Ej: 4421234567" maxlength="10" required>
-                    <div class="input-error-msg" id="telefonoError">Ingresa un teléfono válido de 10 dígitos</div>
-                </div>
-            </div>
-
-            <button type="button" class="toggle-optional-btn" id="toggleOptionalBtn" onclick="toggleOptionalFields()">
-                <span id="toggleIcon">➕</span>
-                <span id="toggleText">Agregar documentos y ubicación (opcional)</span>
-            </button>
-
-            <div class="optional-section" id="optionalSection">
-                <div class="cliente-section">
-                    <h3>📄 Documentos Opcionales</h3>
-                    
-                    <div class="cliente-input-group">
-                        <label>📷 Identificación Oficial</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="fotoINE" class="file-input" accept="image/*" capture="environment">
-                            <label for="fotoINE" class="file-input-label" id="labelINE">
-                                <span>📸</span>
-                                <span>Tomar/Subir Foto de INE</span>
-                            </label>
-                        </div>
-                        <div class="file-preview" id="previewINE">
-                            <img id="imgINE" src="" alt="Vista previa INE">
-                        </div>
-                    </div>
-
-                    <div class="cliente-input-group">
-                        <label>🏠 Comprobante de Domicilio</label>
-                        <div class="file-input-wrapper">
-                            <input type="file" id="fotoComprobante" class="file-input" accept="image/*" capture="environment">
-                            <label for="fotoComprobante" class="file-input-label" id="labelComprobante">
-                                <span>📸</span>
-                                <span>Tomar/Subir Comprobante</span>
-                            </label>
-                        </div>
-                        <div class="file-preview" id="previewComprobante">
-                            <img id="imgComprobante" src="" alt="Vista previa Comprobante">
-                        </div>
-                    </div>
-
-                    <div class="cliente-input-group">
-                        <label>📍 Ubicación</label>
-                        <button type="button" class="location-btn" id="btnUbicacion">
-                            <span>📍</span>
-                            <span id="locationBtnText">Compartir mi ubicación</span>
-                        </button>
-                        <div class="location-info" id="locationInfo"></div>
-                    </div>
-                </div>
-            </div>
-
             <button class="whatsapp-btn" id="whatsappBtn" onclick="enviarWhatsApp()">
                 <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
@@ -650,6 +642,71 @@
 
     <div class="toast" id="toast"></div>
 
+    <!-- NUEVO: MODAL DE CAPTURA DE DATOS -->
+    <div class="modal-overlay" id="modalDatos">
+        <div class="modal-box">
+            <h2>📋 Completa tus datos</h2>
+            <p>Estos datos nos ayudan a procesar tu solicitud más rápido (opcional)</p>
+            
+            <div class="cliente-section">
+                <div class="cliente-input-group">
+                    <label for="nombreClienteModal">Nombre Completo</label>
+                    <input type="text" id="nombreClienteModal" placeholder="Ej: Juan Pérez García">
+                </div>
+                <div class="cliente-input-group">
+                    <label for="telefonoClienteModal">Teléfono (10 dígitos)</label>
+                    <input type="tel" id="telefonoClienteModal" placeholder="Ej: 4421234567" maxlength="10">
+                </div>
+            </div>
+
+            <div class="cliente-section" style="margin-top: 15px;">
+                <h3>📄 Documentos (Opcional)</h3>
+                
+                <div class="cliente-input-group">
+                    <label>📷 Identificación Oficial</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fotoINEModal" class="file-input" accept="image/*" capture="environment">
+                        <label for="fotoINEModal" class="file-input-label" id="labelINEModal">
+                            <span>📸</span>
+                            <span>Tomar/Subir Foto de INE</span>
+                        </label>
+                    </div>
+                    <div class="file-preview" id="previewINEModal">
+                        <img id="imgINEModal" src="" alt="Vista previa INE">
+                    </div>
+                </div>
+
+                <div class="cliente-input-group">
+                    <label>🏠 Comprobante de Domicilio</label>
+                    <div class="file-input-wrapper">
+                        <input type="file" id="fotoComprobanteModal" class="file-input" accept="image/*" capture="environment">
+                        <label for="fotoComprobanteModal" class="file-input-label" id="labelComprobanteModal">
+                            <span>📸</span>
+                            <span>Tomar/Subir Comprobante</span>
+                        </label>
+                    </div>
+                    <div class="file-preview" id="previewComprobanteModal">
+                        <img id="imgComprobanteModal" src="" alt="Vista previa Comprobante">
+                    </div>
+                </div>
+
+                <div class="cliente-input-group">
+                    <label>📍 Ubicación</label>
+                    <button type="button" class="location-btn" id="btnUbicacionModal">
+                        <span>📍</span>
+                        <span id="locationBtnTextModal">Compartir mi ubicación</span>
+                    </button>
+                    <div class="location-info" id="locationInfoModal"></div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="btn-skip" onclick="continuarSinDatos()">Omitir</button>
+                <button class="btn-continue" onclick="guardarYContinuar()">Continuar</button>
+            </div>
+        </div>
+    </div>
+
     <script>
         const SHEET_ID = '19Viesr9Lhy347A9L03J_RuxftUhBduaYsBY206IO6X8';
         const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyFDUZfLq7OUmXscjPFC2vX28qlHxKPQTpTRkKOeLamS8zy5eAEe0xBjEmkZA1mPLlhwQ/exec';
@@ -669,10 +726,11 @@
         let capitalMode = 'input';
         let previousDias = 0;
 
-        let fotoINEData = null;
-        let fotoComprobanteData = null;
-        let ubicacionData = null;
-        let optionalFieldsVisible = false;
+        // NUEVAS VARIABLES PARA EL MODAL
+        let fotoINEModalData = null;
+        let fotoComprobanteModalData = null;
+        let ubicacionModalData = null;
+        let pendingWhatsAppMessage = '';
 
         let currentCalculation = {
             nombre: '',
@@ -686,7 +744,6 @@
             fecha: ''
         };
 
-        // 🎯 SISTEMA DE POPUP ROTATIVO
         let popupInterval = null;
         let popupCurrentIndex = 0;
 
@@ -716,7 +773,7 @@
             popupInterval = setInterval(() => {
                 popupCurrentIndex = (popupCurrentIndex + 1) % popupStates.length;
                 updatePopup();
-            }, 2000); // Cambia cada 2 segundos
+            }, 2000);
         }
 
         function updatePopup() {
@@ -724,12 +781,10 @@
             const labelEl = document.getElementById('popupLabel');
             const valueEl = document.getElementById('popupValue');
 
-            // Aplicar animación
             valueEl.classList.remove('popup-animate');
-            void valueEl.offsetWidth; // Forzar reflow
+            void valueEl.offsetWidth;
             valueEl.classList.add('popup-animate');
 
-            // Actualizar contenido
             labelEl.textContent = state.label;
             valueEl.textContent = state.getValue();
             valueEl.style.color = state.color;
@@ -760,40 +815,11 @@
             return num >= CAPITAL_MIN && num <= CAPITAL_MAX;
         }
 
-        function validarNombre(nombre) {
-            return nombre.trim().length >= 3;
-        }
-
-        function validarTelefono(telefono) {
-            const tel = telefono.replace(/\D/g, '');
-            return tel.length === 10;
-        }
-
         function showToast(message, isError = false) {
             const toast = document.getElementById('toast');
             toast.textContent = message;
             toast.className = 'toast show' + (isError ? ' error' : '');
             setTimeout(() => toast.classList.remove('show'), 3000);
-        }
-
-        function toggleOptionalFields() {
-            optionalFieldsVisible = !optionalFieldsVisible;
-            const section = document.getElementById('optionalSection');
-            const btn = document.getElementById('toggleOptionalBtn');
-            const icon = document.getElementById('toggleIcon');
-            const text = document.getElementById('toggleText');
-            
-            if (optionalFieldsVisible) {
-                section.classList.add('show');
-                btn.classList.add('active');
-                icon.textContent = '➖';
-                text.textContent = 'Ocultar documentos y ubicación';
-            } else {
-                section.classList.remove('show');
-                btn.classList.remove('active');
-                icon.textContent = '➕';
-                text.textContent = 'Agregar documentos y ubicación (opcional)';
-            }
         }
 
         function fileToBase64(file) {
@@ -802,111 +828,6 @@
                 reader.onload = () => resolve(reader.result);
                 reader.onerror = reject;
                 reader.readAsDataURL(file);
-            });
-        }
-
-        function setupFileInputs() {
-            document.getElementById('fotoINE').addEventListener('change', async function(e) {
-                const file = e.target.files[0];
-                const label = document.getElementById('labelINE');
-                const preview = document.getElementById('previewINE');
-                const img = document.getElementById('imgINE');
-                
-                if (file) {
-                    try {
-                        fotoINEData = await fileToBase64(file);
-                        img.src = fotoINEData;
-                        preview.classList.add('show');
-                        label.classList.add('has-file');
-                        label.innerHTML = '<span>✅</span><span>INE cargada</span>';
-                        showToast('✅ INE cargada correctamente', false);
-                    } catch (error) {
-                        showToast('❌ Error al cargar la imagen', true);
-                    }
-                }
-            });
-
-            document.getElementById('fotoComprobante').addEventListener('change', async function(e) {
-                const file = e.target.files[0];
-                const label = document.getElementById('labelComprobante');
-                const preview = document.getElementById('previewComprobante');
-                const img = document.getElementById('imgComprobante');
-                
-                if (file) {
-                    try {
-                        fotoComprobanteData = await fileToBase64(file);
-                        img.src = fotoComprobanteData;
-                        preview.classList.add('show');
-                        label.classList.add('has-file');
-                        label.innerHTML = '<span>✅</span><span>Comprobante cargado</span>';
-                        showToast('✅ Comprobante cargado correctamente', false);
-                    } catch (error) {
-                        showToast('❌ Error al cargar la imagen', true);
-                    }
-                }
-            });
-        }
-
-        function setupLocationButton() {
-            document.getElementById('btnUbicacion').addEventListener('click', function() {
-                const btn = this;
-                const btnText = document.getElementById('locationBtnText');
-                const locationInfo = document.getElementById('locationInfo');
-                
-                if (!navigator.geolocation) {
-                    showToast('❌ Tu navegador no soporta geolocalización', true);
-                    return;
-                }
-                
-                btn.disabled = true;
-                btnText.textContent = 'Obteniendo ubicación...';
-                
-                navigator.geolocation.getCurrentPosition(
-                    async (position) => {
-                        ubicacionData = {
-                            lat: position.coords.latitude,
-                            lng: position.coords.longitude,
-                            accuracy: position.coords.accuracy
-                        };
-                        
-                        try {
-                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${ubicacionData.lat}&lon=${ubicacionData.lng}&format=json`);
-                            const data = await response.json();
-                            ubicacionData.direccion = data.display_name || 'Dirección no disponible';
-                        } catch (error) {
-                            ubicacionData.direccion = `Lat: ${ubicacionData.lat.toFixed(6)}, Lng: ${ubicacionData.lng.toFixed(6)}`;
-                        }
-                        
-                        btn.classList.add('active');
-                        btnText.textContent = '✅ Ubicación obtenida';
-                        locationInfo.textContent = `📍 ${ubicacionData.direccion}`;
-                        locationInfo.classList.add('show');
-                        btn.disabled = false;
-                        
-                        showToast('✅ Ubicación obtenida correctamente', false);
-                    },
-                    (error) => {
-                        btn.disabled = false;
-                        btnText.textContent = 'Compartir mi ubicación';
-                        
-                        let mensaje = '';
-                        switch(error.code) {
-                            case error.PERMISSION_DENIED:
-                                mensaje = '❌ Permiso de ubicación denegado';
-                                break;
-                            case error.POSITION_UNAVAILABLE:
-                                mensaje = '❌ Ubicación no disponible';
-                                break;
-                            case error.TIMEOUT:
-                                mensaje = '❌ Tiempo de espera agotado';
-                                break;
-                            default:
-                                mensaje = '❌ Error al obtener ubicación';
-                        }
-                        
-                        showToast(mensaje, true);
-                    }
-                );
             });
         }
 
@@ -951,8 +872,6 @@
                 });
 
                 setupCapitalModes();
-                setupFileInputs();
-                setupLocationButton();
 
                 document.getElementById('dias').addEventListener('change', function() {
                     selectedDias = parseFloat(this.value);
@@ -987,29 +906,6 @@
                     } else {
                         capitalError.classList.add('show');
                         this.style.borderColor = '#FF6B6B';
-                    }
-                });
-
-                document.getElementById('nombreCliente').addEventListener('input', function() {
-                    const errorMsg = document.getElementById('nombreError');
-                    if (validarNombre(this.value)) {
-                        this.classList.remove('error');
-                        errorMsg.classList.remove('show');
-                    } else {
-                        this.classList.add('error');
-                        errorMsg.classList.add('show');
-                    }
-                });
-
-                document.getElementById('telefonoCliente').addEventListener('input', function() {
-                    this.value = this.value.replace(/\D/g, '');
-                    const errorMsg = document.getElementById('telefonoError');
-                    if (validarTelefono(this.value)) {
-                        this.classList.remove('error');
-                        errorMsg.classList.remove('show');
-                    } else {
-                        this.classList.add('error');
-                        errorMsg.classList.add('show');
                     }
                 });
 
@@ -1099,102 +995,212 @@
                 fecha: new Date().toLocaleString('es-MX')
             };
 
-            // Actualizar displays
             document.getElementById('pagoDiario').textContent = formatMoney(pagoDiario);
             document.getElementById('totalDias').textContent = dias;
             document.getElementById('interesAplicado').textContent = interesPorc + '%';
             document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
 
-            // Iniciar rotación del popup
             popupCurrentIndex = 0;
             updatePopup();
             startPopupRotation();
         }
 
-        async function guardarEnGoogleSheets(datos) {
-            try {
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    mode: 'no-cors',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(datos)
-                });
-
-                console.log('✅ Datos enviados a Google Sheets:', datos);
-                return true;
-            } catch (error) {
-                console.error('❌ Error al guardar en Google Sheets:', error);
-                return false;
-            }
-        }
-
+        // NUEVA FUNCIÓN: enviarWhatsApp actualizada
         async function enviarWhatsApp() {
-            const nombre = document.getElementById('nombreCliente').value.trim();
-            const telefono = document.getElementById('telefonoCliente').value.trim();
-
-            if (!validarNombre(nombre)) {
-                showToast('❌ Por favor ingresa tu nombre completo', true);
-                document.getElementById('nombreCliente').focus();
-                return;
-            }
-
-            if (!validarTelefono(telefono)) {
-                showToast('❌ Ingresa un teléfono válido de 10 dígitos', true);
-                document.getElementById('telefonoCliente').focus();
-                return;
-            }
-
             if (currentCalculation.totalPrestar === 0) {
                 showToast('❌ Primero configura tu préstamo', true);
                 return;
             }
 
+            let mensaje = `🔹 *Simulación de Préstamo*
+
+💰 *Capital Solicitado:* ${formatMoney(currentCalculation.capital)}
+📊 *Interés (${currentCalculation.interesPorc}%):* ${formatMoney(currentCalculation.interesTotal)}
+💵 *Total a Prestar:* ${formatMoney(currentCalculation.totalPrestar)}
+📅 *Plazo:* ${currentCalculation.dias} días
+💳 *Pago Diario:* ${formatMoney(currentCalculation.pagoDiario)}
+
+¡Me interesa este préstamo!`;
+
+            pendingWhatsAppMessage = mensaje;
+            mostrarModalDatos();
+        }
+
+        // NUEVAS FUNCIONES DEL MODAL
+        function mostrarModalDatos() {
+            const modal = document.getElementById('modalDatos');
+            modal.classList.add('show');
+            setupModalFileInputs();
+            setupModalLocationButton();
+        }
+
+        function cerrarModalDatos() {
+            const modal = document.getElementById('modalDatos');
+            modal.classList.remove('show');
+        }
+
+        function setupModalFileInputs() {
+            document.getElementById('fotoINEModal').addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                const label = document.getElementById('labelINEModal');
+                const preview = document.getElementById('previewINEModal');
+                const img = document.getElementById('imgINEModal');
+                
+                if (file) {
+                    try {
+                        fotoINEModalData = await fileToBase64(file);
+                        img.src = fotoINEModalData;
+                        preview.classList.add('show');
+                        label.classList.add('has-file');
+                        label.innerHTML = '<span>✅</span><span>INE cargada</span>';
+                    } catch (error) {
+                        showToast('❌ Error al cargar la imagen', true);
+                    }
+                }
+            });
+
+            document.getElementById('fotoComprobanteModal').addEventListener('change', async function(e) {
+                const file = e.target.files[0];
+                const label = document.getElementById('labelComprobanteModal');
+                const preview = document.getElementById('previewComprobanteModal');
+                const img = document.getElementById('imgComprobanteModal');
+                
+                if (file) {
+                    try {
+                        fotoComprobanteModalData = await fileToBase64(file);
+                        img.src = fotoComprobanteModalData;
+                        preview.classList.add('show');
+                        label.classList.add('has-file');
+                        label.innerHTML = '<span>✅</span><span>Comprobante cargado</span>';
+                    } catch (error) {
+                        showToast('❌ Error al cargar la imagen', true);
+                    }
+                }
+            });
+        }
+
+        function setupModalLocationButton() {
+            document.getElementById('btnUbicacionModal').addEventListener('click', function() {
+                const btn = this;
+                const btnText = document.getElementById('locationBtnTextModal');
+                const locationInfo = document.getElementById('locationInfoModal');
+                
+                if (!navigator.geolocation) {
+                    showToast('❌ Tu navegador no soporta geolocalización', true);
+                    return;
+                }
+                
+                btn.disabled = true;
+                btnText.textContent = 'Obteniendo ubicación...';
+                
+                navigator.geolocation.getCurrentPosition(
+                    async (position) => {
+                        ubicacionModalData = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                            accuracy: position.coords.accuracy
+                        };
+                        
+                        try {
+                            const response = await fetch(`https://nominatim.openstreetmap.org/reverse?lat=${ubicacionModalData.lat}&lon=${ubicacionModalData.lng}&format=json`);
+                            const data = await response.json();
+                            ubicacionModalData.direccion = data.display_name || 'Dirección no disponible';
+                        } catch (error) {
+                            ubicacionModalData.direccion = `Lat: ${ubicacionModalData.lat.toFixed(6)}, Lng: ${ubicacionModalData.lng.toFixed(6)}`;
+                        }
+                        
+                        btn.classList.add('active');
+                        btnText.textContent = '✅ Ubicación obtenida';
+                        locationInfo.textContent = `📍 ${ubicacionModalData.direccion}`;
+                        locationInfo.classList.add('show');
+                        btn.disabled = false;
+                        
+                        showToast('✅ Ubicación obtenida correctamente', false);
+                    },
+                    (error) => {
+                        btn.disabled = false;
+                        btnText.textContent = 'Compartir mi ubicación';
+                        showToast('❌ Error al obtener ubicación', true);
+                    }
+                );
+            });
+        }
+
+        async function continuarSinDatos() {
+            await guardarSimulacion('', '', null, null, null);
+            cerrarModalDatos();
+            abrirWhatsApp(pendingWhatsAppMessage);
+        }
+
+        async function guardarYContinuar() {
+            const nombre = document.getElementById('nombreClienteModal').value.trim();
+            const telefono = document.getElementById('telefonoClienteModal').value.trim();
+            
+            let mensajeFinal = pendingWhatsAppMessage;
+            
+            if (nombre || telefono) {
+                let datosPersonales = '\n\n';
+                if (nombre) datosPersonales += `👤 *Nombre:* ${nombre}\n`;
+                if (telefono) datosPersonales += `📱 *Teléfono:* ${telefono}\n`;
+                
+                const lineas = mensajeFinal.split('\n');
+                lineas.splice(1, 0, datosPersonales);
+                mensajeFinal = lineas.join('\n');
+            }
+            
+            if (ubicacionModalData) {
+                mensajeFinal += `\n\n📍 *Ubicación:* ${ubicacionModalData.direccion}\n🗺️ *Mapa:* https://www.google.com/maps?q=${ubicacionModalData.lat},${ubicacionModalData.lng}`;
+            }
+            
+            if (fotoINEModalData || fotoComprobanteModalData) {
+                mensajeFinal += '\n\n✅ *Documentos adjuntos:*';
+                if (fotoINEModalData) mensajeFinal += '\n- Identificación oficial ✓';
+                if (fotoComprobanteModalData) mensajeFinal += '\n- Comprobante de domicilio ✓';
+            }
+            
+            await guardarSimulacion(nombre, telefono, fotoINEModalData, fotoComprobanteModalData, ubicacionModalData);
+            cerrarModalDatos();
+            abrirWhatsApp(mensajeFinal);
+        }
+
+        async function guardarSimulacion(nombre, telefono, fotoINE, fotoComprobante, ubicacion) {
             const datosParaGuardar = {
-                fecha: currentCalculation.fecha,
-                nombre: nombre,
-                telefono: telefono,
+                fecha: new Date().toLocaleString('es-MX'),
+                nombre: nombre || 'Sin datos',
+                telefono: telefono || 'Sin datos',
                 capital: currentCalculation.capital,
                 dias: currentCalculation.dias,
                 interesPorc: currentCalculation.interesPorc,
                 interesTotal: currentCalculation.interesTotal,
                 totalPrestar: currentCalculation.totalPrestar,
                 pagoDiario: currentCalculation.pagoDiario,
-                fotoINE: fotoINEData || '',
-                fotoComprobante: fotoComprobanteData || '',
-                latitud: ubicacionData ? ubicacionData.lat : '',
-                longitud: ubicacionData ? ubicacionData.lng : '',
-                direccion: ubicacionData ? ubicacionData.direccion : ''
+                fotoINE: fotoINE || '',
+                fotoComprobante: fotoComprobante || '',
+                latitud: ubicacion ? ubicacion.lat : '',
+                longitud: ubicacion ? ubicacion.lng : '',
+                direccion: ubicacion ? ubicacion.direccion : '',
+                estado: nombre && telefono ? 'Completo' : 'Sin datos'
             };
-
-            guardarEnGoogleSheets(datosParaGuardar);
-
-            let mensaje = `🔹 *Simulación de Préstamo*
-
-👤 *Nombre:* ${nombre}
-📱 *Teléfono:* ${telefono}
-
-💰 *Capital Solicitado:* ${formatMoney(currentCalculation.capital)}
-📊 *Interés (${currentCalculation.interesPorc}%):* ${formatMoney(currentCalculation.interesTotal)}
-💵 *Total a Prestar:* ${formatMoney(currentCalculation.totalPrestar)}
-📅 *Plazo:* ${currentCalculation.dias} días
-💳 *Pago Diario:* ${formatMoney(currentCalculation.pagoDiario)}`;
-
-            if (ubicacionData) {
-                mensaje += `\n\n📍 *Ubicación:* ${ubicacionData.direccion}\n🗺️ *Mapa:* https://www.google.com/maps?q=${ubicacionData.lat},${ubicacionData.lng}`;
+            
+            try {
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(datosParaGuardar)
+                });
+                
+                console.log('✅ Datos enviados a Google Sheets:', datosParaGuardar);
+                showToast('✅ Simulación guardada', false);
+            } catch (error) {
+                console.error('❌ Error al guardar:', error);
+                showToast('⚠️ Continuando con WhatsApp...', false);
             }
+        }
 
-            if (fotoINEData || fotoComprobanteData) {
-                mensaje += '\n\n✅ *Documentos adjuntos:*';
-                if (fotoINEData) mensaje += '\n- Identificación oficial ✓';
-                if (fotoComprobanteData) mensaje += '\n- Comprobante de domicilio ✓';
-            }
-
-            mensaje += '\n\n¡Me interesa este préstamo!';
-
+        function abrirWhatsApp(mensaje) {
             const url = `https://wa.me/5214422580524?text=${encodeURIComponent(mensaje)}`;
-            
             showToast('✅ Abriendo WhatsApp...', false);
-            
             setTimeout(() => {
                 window.open(url, '_blank');
             }, 500);
