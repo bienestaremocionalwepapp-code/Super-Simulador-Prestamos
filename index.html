@@ -26,19 +26,107 @@
             padding: 25px;
             margin: 20px auto;
         }
-        .header { text-align: center; margin-bottom: 15px; }
+        .header { 
+            text-align: center; 
+            margin-bottom: 15px;
+        }
         .header h1 { color: #667eea; font-size: 1.8em; margin-bottom: 3px; }
         .header p { color: #666; font-size: 0.9em; }
+        
+        /* 🆕 POPUP ANIMADO SIMPLE */
         .total-prestar {
+            position: relative;
             text-align: center;
             margin-bottom: 15px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 20px 15px;
+            padding: 30px 15px;
             border-radius: 15px;
             color: white;
+            overflow: hidden;
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
-        .total-prestar-label { font-size: 0.9em; opacity: 0.95; margin-bottom: 5px; font-weight: 500; }
-        .total-prestar-value { font-size: 2.8em; font-weight: bold; }
+        
+        .popup-label {
+            font-size: 1.6em;
+            opacity: 0.9;
+            margin-bottom: 10px;
+            font-weight: 500;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: all 0.5s ease;
+        }
+        
+        .popup-value {
+            font-size: clamp(40px, 12vw, 56px);
+            line-height: 1.2;
+            font-weight: bold;
+            text-shadow: 0 3px 6px rgba(0,0,0,0.3);
+            transition: all 0.5s ease;
+            min-height: 56px;
+            word-break: break-word;
+            max-width: 100%;
+            padding: 0 10px;
+        }
+        
+        /* Animación de popup */
+        @keyframes popupBounce {
+            0% {
+                transform: scale(0.8);
+                opacity: 0;
+            }
+            50% {
+                transform: scale(1.1);
+            }
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        .popup-animate {
+            animation: popupBounce 0.6s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+        }
+
+        /* 🆕 BANNER DE CONSEJO FINANCIERO */
+        .consejo-banner {
+            background: linear-gradient(135deg, #FF6B6B 0%, #FF5252 100%);
+            padding: 15px 15px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+        }
+
+        .consejo-text {
+            color: white;
+            font-size: 1.7em;
+            line-height: 1.4;
+            font-weight: 600;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            white-space: nowrap;
+            animation: scrollText 20s linear infinite;
+        }
+
+        @keyframes scrollText {
+            0% {
+                transform: translateX(100%);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .consejo-banner:hover .consejo-text {
+            animation-play-state: paused;
+        }
+        
         .resultados {
             background: #f8f9fa;
             padding: 15px;
@@ -191,7 +279,43 @@
         }
         .input-error-msg.show { display: block; }
 
-        /* Estilos para inputs de archivo (fotos) */
+        .toggle-optional-btn {
+            width: 100%;
+            padding: 12px;
+            background: #f0f4ff;
+            border: 2px dashed #667eea;
+            border-radius: 12px;
+            color: #667eea;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .toggle-optional-btn:hover {
+            background: #e0ebff;
+            border-color: #764ba2;
+        }
+        .toggle-optional-btn.active {
+            background: #667eea;
+            color: white;
+            border-style: solid;
+        }
+
+        .optional-section {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease, opacity 0.5s ease;
+            opacity: 0;
+        }
+        .optional-section.show {
+            max-height: 2000px;
+            opacity: 1;
+        }
+
         .file-input-wrapper {
             position: relative;
             margin-top: 8px;
@@ -241,7 +365,6 @@
             border-radius: 8px;
         }
 
-        /* Botón de ubicación */
         .location-btn {
             width: 100%;
             padding: 12px;
@@ -312,94 +435,6 @@
         .whatsapp-icon { width: 24px; height: 24px; fill: white; }
         .loading { text-align: center; padding: 40px; color: #667eea; font-size: 1.1em; }
 
-        /* Modal para capturar datos */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.7);
-            z-index: 999;
-            animation: fadeIn 0.3s ease;
-        }
-        .modal-overlay.show { display: flex; align-items: center; justify-content: center; }
-        
-        .modal {
-            background: white;
-            border-radius: 20px;
-            max-width: 500px;
-            width: 90%;
-            max-height: 90vh;
-            overflow-y: auto;
-            padding: 25px;
-            animation: slideUp 0.3s ease;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        .modal-header h2 {
-            color: #667eea;
-            font-size: 1.5em;
-            margin-bottom: 8px;
-        }
-        .modal-header p {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        .modal-buttons {
-            display: flex;
-            gap: 10px;
-            margin-top: 20px;
-        }
-        .btn-cancel {
-            flex: 1;
-            padding: 12px;
-            background: #e0e0e0;
-            color: #666;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-        .btn-cancel:hover { background: #d0d0d0; }
-        
-        .btn-submit {
-            flex: 2;
-            padding: 12px;
-            background: #25D366;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .btn-submit:hover { background: #128C7E; }
-        .btn-submit:disabled {
-            background: #ccc;
-            cursor: not-allowed;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { transform: translateY(50px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
         .qr-section {
             margin-top: 20px;
             padding: 20px;
@@ -454,19 +489,23 @@
         }
         .toast.show { display: block; }
         .toast.error { background: #FF6B6B; }
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
+        }
 
         @media (max-width: 600px) {
             .container { padding: 20px; }
             .total-prestar-value { font-size: 2.3em; }
+            .capital-value { font-size: 1.5em; }
             body { padding: 10px; }
-            .modal { width: 95%; padding: 20px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>💰 Simulador de Préstamos</h1>
+            <h1>💰 Super Simulador de Préstamos</h1>
             <p>Calcula tu préstamo en tiempo real</p>
         </div>
         <div id="loadingMessage" class="loading">
@@ -474,9 +513,17 @@
         </div>
         <div id="appContent" style="display: none;">
             <div class="total-prestar">
-                <div class="total-prestar-label">Monto Total a Prestar</div>
-                <div class="total-prestar-value" id="totalPrestar">$0.00</div>
+                <div class="popup-label" id="popupLabel">💰 Capital Solicitado</div>
+                <div class="popup-value" id="popupValue">$0.00</div>
             </div>
+
+            <!-- 🆕 Banner de Consejo Financiero -->
+            <div class="consejo-banner">
+                <div class="consejo-text">
+                    ⚠️ Consejo Financiero !!! No te endeudes si no es necesario, existen empresas que se aprovechan de tu necesidad para después apropiarse de tus bienes con juicios absurdos !!! ⚠️
+                </div>
+            </div>
+            
             <div class="resultados">
                 <div class="resultado-item">
                     <span class="resultado-label">Pago Diario</span>
@@ -521,15 +568,75 @@
                 </div>
             </div>
 
-            <!-- Botón de WhatsApp (ahora abre modal) -->
-            <button class="whatsapp-btn" id="whatsappBtn" onclick="abrirModalDatos()">
+            <div class="cliente-section">
+                <h3>📋 Tus Datos</h3>
+                <div class="cliente-input-group">
+                    <label for="nombreCliente">Nombre Completo *</label>
+                    <input type="text" id="nombreCliente" placeholder="Ej: Juan Pérez García" required>
+                    <div class="input-error-msg" id="nombreError">Por favor ingresa tu nombre</div>
+                </div>
+                <div class="cliente-input-group">
+                    <label for="telefonoCliente">Teléfono (10 dígitos) *</label>
+                    <input type="tel" id="telefonoCliente" placeholder="Ej: 4421234567" maxlength="10" required>
+                    <div class="input-error-msg" id="telefonoError">Ingresa un teléfono válido de 10 dígitos</div>
+                </div>
+            </div>
+
+            <button type="button" class="toggle-optional-btn" id="toggleOptionalBtn" onclick="toggleOptionalFields()">
+                <span id="toggleIcon">➕</span>
+                <span id="toggleText">Agregar documentos y ubicación (opcional)</span>
+            </button>
+
+            <div class="optional-section" id="optionalSection">
+                <div class="cliente-section">
+                    <h3>📄 Documentos Opcionales</h3>
+                    
+                    <div class="cliente-input-group">
+                        <label>📷 Identificación Oficial</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="fotoINE" class="file-input" accept="image/*" capture="environment">
+                            <label for="fotoINE" class="file-input-label" id="labelINE">
+                                <span>📸</span>
+                                <span>Tomar/Subir Foto de INE</span>
+                            </label>
+                        </div>
+                        <div class="file-preview" id="previewINE">
+                            <img id="imgINE" src="" alt="Vista previa INE">
+                        </div>
+                    </div>
+
+                    <div class="cliente-input-group">
+                        <label>🏠 Comprobante de Domicilio</label>
+                        <div class="file-input-wrapper">
+                            <input type="file" id="fotoComprobante" class="file-input" accept="image/*" capture="environment">
+                            <label for="fotoComprobante" class="file-input-label" id="labelComprobante">
+                                <span>📸</span>
+                                <span>Tomar/Subir Comprobante</span>
+                            </label>
+                        </div>
+                        <div class="file-preview" id="previewComprobante">
+                            <img id="imgComprobante" src="" alt="Vista previa Comprobante">
+                        </div>
+                    </div>
+
+                    <div class="cliente-input-group">
+                        <label>📍 Ubicación</label>
+                        <button type="button" class="location-btn" id="btnUbicacion">
+                            <span>📍</span>
+                            <span id="locationBtnText">Compartir mi ubicación</span>
+                        </button>
+                        <div class="location-info" id="locationInfo"></div>
+                    </div>
+                </div>
+            </div>
+
+            <button class="whatsapp-btn" id="whatsappBtn" onclick="enviarWhatsApp()">
                 <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                     <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                 </svg>
-                ¡Me interesa este préstamo!
+                Enviar por WhatsApp
             </button>
 
-            <!-- QR -->
             <div class="qr-section">
                 <h3>Comparte este simulador</h3>
                 <div style="display: flex; justify-content: center; margin: 15px 0;">
@@ -537,81 +644,6 @@
                 </div>
                 <p class="qr-text">Escanea para abrir en otro celular</p>
                 <button class="share-btn" onclick="shareViaWhatsApp()">Compartir por WhatsApp</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- MODAL PARA CAPTURAR DATOS -->
-    <div class="modal-overlay" id="modalOverlay" onclick="cerrarModalSiFueraClick(event)">
-        <div class="modal" onclick="event.stopPropagation()">
-            <div class="modal-header">
-                <h2>📋 Para continuar, necesitamos tus datos</h2>
-                <p>Completa la información para enviar tu solicitud por WhatsApp</p>
-            </div>
-
-            <div class="cliente-section">
-                <h3>Datos Personales</h3>
-                <div class="cliente-input-group">
-                    <label for="nombreClienteModal">Nombre Completo *</label>
-                    <input type="text" id="nombreClienteModal" placeholder="Ej: Juan Pérez García" required>
-                    <div class="input-error-msg" id="nombreErrorModal">Por favor ingresa tu nombre</div>
-                </div>
-                <div class="cliente-input-group">
-                    <label for="telefonoClienteModal">Teléfono (10 dígitos) *</label>
-                    <input type="tel" id="telefonoClienteModal" placeholder="Ej: 4421234567" maxlength="10" required>
-                    <div class="input-error-msg" id="telefonoErrorModal">Ingresa un teléfono válido de 10 dígitos</div>
-                </div>
-            </div>
-
-            <div class="cliente-section">
-                <h3>📄 Documentos (Opcionales)</h3>
-                
-                <div class="cliente-input-group">
-                    <label>📷 Identificación Oficial</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="fotoINEModal" class="file-input" accept="image/*" capture="environment">
-                        <label for="fotoINEModal" class="file-input-label" id="labelINEModal">
-                            <span>📸</span>
-                            <span>Tomar/Subir Foto de INE</span>
-                        </label>
-                    </div>
-                    <div class="file-preview" id="previewINEModal">
-                        <img id="imgINEModal" src="" alt="Vista previa INE">
-                    </div>
-                </div>
-
-                <div class="cliente-input-group">
-                    <label>🏠 Comprobante de Domicilio</label>
-                    <div class="file-input-wrapper">
-                        <input type="file" id="fotoComprobanteModal" class="file-input" accept="image/*" capture="environment">
-                        <label for="fotoComprobanteModal" class="file-input-label" id="labelComprobanteModal">
-                            <span>📸</span>
-                            <span>Tomar/Subir Comprobante</span>
-                        </label>
-                    </div>
-                    <div class="file-preview" id="previewComprobanteModal">
-                        <img id="imgComprobanteModal" src="" alt="Vista previa Comprobante">
-                    </div>
-                </div>
-
-                <div class="cliente-input-group">
-                    <label>📍 Ubicación</label>
-                    <button type="button" class="location-btn" id="btnUbicacionModal">
-                        <span>📍</span>
-                        <span id="locationBtnTextModal">Compartir mi ubicación</span>
-                    </button>
-                    <div class="location-info" id="locationInfoModal"></div>
-                </div>
-            </div>
-
-            <div class="modal-buttons">
-                <button class="btn-cancel" onclick="cerrarModal()">Cancelar</button>
-                <button class="btn-submit" onclick="enviarWhatsApp()">
-                    <svg class="whatsapp-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.890-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
-                    </svg>
-                    Enviar por WhatsApp
-                </button>
             </div>
         </div>
     </div>
@@ -640,6 +672,7 @@
         let fotoINEData = null;
         let fotoComprobanteData = null;
         let ubicacionData = null;
+        let optionalFieldsVisible = false;
 
         let currentCalculation = {
             nombre: '',
@@ -652,6 +685,55 @@
             pagoDiario: 0,
             fecha: ''
         };
+
+        // 🎯 SISTEMA DE POPUP ROTATIVO
+        let popupInterval = null;
+        let popupCurrentIndex = 0;
+
+        const popupStates = [
+            {
+                label: '💰 Capital Solicitado',
+                getValue: () => formatMoney(currentCalculation.capital),
+                color: '#FFFFFF'
+            },
+            {
+                label: '📊 Total Interés',
+                getValue: () => formatMoney(currentCalculation.interesTotal),
+                color: '#FFD700'
+            },
+            {
+                label: '💵 Total a Pagar',
+                getValue: () => formatMoney(currentCalculation.totalPrestar),
+                color: '#90EE90'
+            }
+        ];
+
+        function startPopupRotation() {
+            if (popupInterval) {
+                clearInterval(popupInterval);
+            }
+
+            popupInterval = setInterval(() => {
+                popupCurrentIndex = (popupCurrentIndex + 1) % popupStates.length;
+                updatePopup();
+            }, 2000); // Cambia cada 2 segundos
+        }
+
+        function updatePopup() {
+            const state = popupStates[popupCurrentIndex];
+            const labelEl = document.getElementById('popupLabel');
+            const valueEl = document.getElementById('popupValue');
+
+            // Aplicar animación
+            valueEl.classList.remove('popup-animate');
+            void valueEl.offsetWidth; // Forzar reflow
+            valueEl.classList.add('popup-animate');
+
+            // Actualizar contenido
+            labelEl.textContent = state.label;
+            valueEl.textContent = state.getValue();
+            valueEl.style.color = state.color;
+        }
 
         function formatMoney(num) {
             return '$' + num.toFixed(2).replace(/\d(?=(\d{3})+\.)/g, '$&,');
@@ -694,24 +776,23 @@
             setTimeout(() => toast.classList.remove('show'), 3000);
         }
 
-        // Funciones del modal
-        function abrirModalDatos() {
-            if (currentCalculation.totalPrestar === 0) {
-                showToast('❌ Primero configura tu préstamo', true);
-                return;
-            }
-            document.getElementById('modalOverlay').classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function cerrarModal() {
-            document.getElementById('modalOverlay').classList.remove('show');
-            document.body.style.overflow = 'auto';
-        }
-
-        function cerrarModalSiFueraClick(event) {
-            if (event.target.id === 'modalOverlay') {
-                cerrarModal();
+        function toggleOptionalFields() {
+            optionalFieldsVisible = !optionalFieldsVisible;
+            const section = document.getElementById('optionalSection');
+            const btn = document.getElementById('toggleOptionalBtn');
+            const icon = document.getElementById('toggleIcon');
+            const text = document.getElementById('toggleText');
+            
+            if (optionalFieldsVisible) {
+                section.classList.add('show');
+                btn.classList.add('active');
+                icon.textContent = '➖';
+                text.textContent = 'Ocultar documentos y ubicación';
+            } else {
+                section.classList.remove('show');
+                btn.classList.remove('active');
+                icon.textContent = '➕';
+                text.textContent = 'Agregar documentos y ubicación (opcional)';
             }
         }
 
@@ -725,11 +806,11 @@
         }
 
         function setupFileInputs() {
-            document.getElementById('fotoINEModal').addEventListener('change', async function(e) {
+            document.getElementById('fotoINE').addEventListener('change', async function(e) {
                 const file = e.target.files[0];
-                const label = document.getElementById('labelINEModal');
-                const preview = document.getElementById('previewINEModal');
-                const img = document.getElementById('imgINEModal');
+                const label = document.getElementById('labelINE');
+                const preview = document.getElementById('previewINE');
+                const img = document.getElementById('imgINE');
                 
                 if (file) {
                     try {
@@ -745,11 +826,11 @@
                 }
             });
 
-            document.getElementById('fotoComprobanteModal').addEventListener('change', async function(e) {
+            document.getElementById('fotoComprobante').addEventListener('change', async function(e) {
                 const file = e.target.files[0];
-                const label = document.getElementById('labelComprobanteModal');
-                const preview = document.getElementById('previewComprobanteModal');
-                const img = document.getElementById('imgComprobanteModal');
+                const label = document.getElementById('labelComprobante');
+                const preview = document.getElementById('previewComprobante');
+                const img = document.getElementById('imgComprobante');
                 
                 if (file) {
                     try {
@@ -767,10 +848,10 @@
         }
 
         function setupLocationButton() {
-            document.getElementById('btnUbicacionModal').addEventListener('click', function() {
+            document.getElementById('btnUbicacion').addEventListener('click', function() {
                 const btn = this;
-                const btnText = document.getElementById('locationBtnTextModal');
-                const locationInfo = document.getElementById('locationInfoModal');
+                const btnText = document.getElementById('locationBtnText');
+                const locationInfo = document.getElementById('locationInfo');
                 
                 if (!navigator.geolocation) {
                     showToast('❌ Tu navegador no soporta geolocalización', true);
@@ -909,8 +990,8 @@
                     }
                 });
 
-                document.getElementById('nombreClienteModal').addEventListener('input', function() {
-                    const errorMsg = document.getElementById('nombreErrorModal');
+                document.getElementById('nombreCliente').addEventListener('input', function() {
+                    const errorMsg = document.getElementById('nombreError');
                     if (validarNombre(this.value)) {
                         this.classList.remove('error');
                         errorMsg.classList.remove('show');
@@ -920,9 +1001,9 @@
                     }
                 });
 
-                document.getElementById('telefonoClienteModal').addEventListener('input', function() {
+                document.getElementById('telefonoCliente').addEventListener('input', function() {
                     this.value = this.value.replace(/\D/g, '');
-                    const errorMsg = document.getElementById('telefonoErrorModal');
+                    const errorMsg = document.getElementById('telefonoError');
                     if (validarTelefono(this.value)) {
                         this.classList.remove('error');
                         errorMsg.classList.remove('show');
@@ -933,6 +1014,7 @@
                 });
 
                 selectedCapital = parseFloat(capitalInput.value);
+                
                 calcular();
                 generateQR();
 
@@ -986,7 +1068,7 @@
             const dias = Number(selectedDias);
 
             if (!validarCapital(capital) || isNaN(capital) || isNaN(dias) || capital <= 0 || dias <= 0) {
-                document.getElementById('totalPrestar').textContent = '$0.00';
+                document.getElementById('popupValue').textContent = '$0.00';
                 document.getElementById('pagoDiario').textContent = '$0.00';
                 document.getElementById('totalDias').textContent = '0';
                 document.getElementById('interesAplicado').textContent = '0%';
@@ -1017,11 +1099,16 @@
                 fecha: new Date().toLocaleString('es-MX')
             };
 
-            document.getElementById('totalPrestar').textContent = formatMoney(totalPrestar);
+            // Actualizar displays
             document.getElementById('pagoDiario').textContent = formatMoney(pagoDiario);
             document.getElementById('totalDias').textContent = dias;
             document.getElementById('interesAplicado').textContent = interesPorc + '%';
             document.getElementById('totalInteres').textContent = formatMoney(interesTotal);
+
+            // Iniciar rotación del popup
+            popupCurrentIndex = 0;
+            updatePopup();
+            startPopupRotation();
         }
 
         async function guardarEnGoogleSheets(datos) {
@@ -1042,18 +1129,23 @@
         }
 
         async function enviarWhatsApp() {
-            const nombre = document.getElementById('nombreClienteModal').value.trim();
-            const telefono = document.getElementById('telefonoClienteModal').value.trim();
+            const nombre = document.getElementById('nombreCliente').value.trim();
+            const telefono = document.getElementById('telefonoCliente').value.trim();
 
             if (!validarNombre(nombre)) {
                 showToast('❌ Por favor ingresa tu nombre completo', true);
-                document.getElementById('nombreClienteModal').focus();
+                document.getElementById('nombreCliente').focus();
                 return;
             }
 
             if (!validarTelefono(telefono)) {
                 showToast('❌ Ingresa un teléfono válido de 10 dígitos', true);
-                document.getElementById('telefonoClienteModal').focus();
+                document.getElementById('telefonoCliente').focus();
+                return;
+            }
+
+            if (currentCalculation.totalPrestar === 0) {
+                showToast('❌ Primero configura tu préstamo', true);
                 return;
             }
 
@@ -1101,7 +1193,6 @@
 
             const url = `https://wa.me/5214422580524?text=${encodeURIComponent(mensaje)}`;
             
-            cerrarModal();
             showToast('✅ Abriendo WhatsApp...', false);
             
             setTimeout(() => {
