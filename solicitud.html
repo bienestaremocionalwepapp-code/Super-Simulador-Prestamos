@@ -211,7 +211,13 @@ body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;bac
 const SHEET_ID='19Viesr9Lhy347A9L03J_RuxftUhBduaYsBY206IO6X8';
 const ADMIN_SHEET='TelefonoAdmin';
 const ADMIN_FALLBACK='5214422580524';
-const APPS_SCRIPT_URL='https://script.google.com/macros/s/AKfycbwkI-t5xxEHZWWAjR1zMk7YYMVmESzno5xpA14yA2FE0edEc1QMwjJzFRztvrrI22zL6w/exec';
+
+// ══════════════════════════════════════════════════════════════
+// ✅ CORRECCIÓN PRINCIPAL: USA LA URL CORRECTA DE TU WEB APP
+//    Ve a Apps Script → Implementar → Administrar implementaciones
+//    y copia la URL de tu implementación activa aquí:
+// ══════════════════════════════════════════════════════════════
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw83md07bzx1UmGRn51i-pRiuvQaEig_mUWS4VjvO0yTIlDCULqT8p3NGsSe2S4nZhzjA/exec';
 let adminPhone=ADMIN_FALLBACK,adminEmail='',calcData=null,fotoINE=null,fotoCDom=null,ubicacion=null,enviando=false;
 const gi=id=>document.getElementById(id);
 function fmt(n){return'$'+Number(n).toLocaleString('es-MX',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -220,14 +226,34 @@ let _tT;
 function toast(msg,tipo=''){clearTimeout(_tT);const el=gi('toast');el.textContent=msg;el.className='show'+(tipo?' '+tipo:'');_tT=setTimeout(()=>el.classList.remove('show'),3500);}
 function setProgress(pct){const bar=gi('progressBar'),fill=gi('progressFill');if(pct>0){bar.classList.add('show');fill.style.width=pct+'%';}else{bar.classList.remove('show');fill.style.width='0%';}}
 
-/* POST SIN no-cors — llega realmente al Apps Script */
+// ══════════════════════════════════════════════════════════════
+// ✅ FIX CORS: Enviar como text/plain (no dispara preflight)
+//    Apps Script recibe el JSON en e.postData.contents igual
+// ══════════════════════════════════════════════════════════════
 async function postScript(payload){
   try{
-    const resp=await fetch(APPS_SCRIPT_URL,{method:'POST',body:JSON.stringify(payload)});
-    const json=await resp.json();
-    console.log('✅ Apps Script:',json);
-    return json;
-  }catch(e){console.warn('⚠️ postScript:',e);return null;}
+    const resp = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      // ⚠️ NO usar 'Content-Type: application/json' — causa error CORS preflight
+      // text/plain no dispara preflight y Apps Script lee el body igual
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+      body: JSON.stringify(payload),
+      redirect: 'follow'  // Apps Script redirige, necesitamos seguir el redirect
+    });
+    const text = await resp.text();
+    // Apps Script a veces devuelve texto con redirect, intentar parsear
+    try {
+      const json = JSON.parse(text);
+      console.log('✅ Apps Script response:', json);
+      return json;
+    } catch(e) {
+      console.warn('⚠️ Respuesta no es JSON:', text);
+      return { success: false, message: 'Respuesta inesperada del servidor' };
+    }
+  }catch(err){
+    console.warn('⚠️ postScript network error:', err.message);
+    return null;
+  }
 }
 
 async function detectarCorreoNavegador(){
@@ -235,7 +261,6 @@ async function detectarCorreoNavegador(){
   const saved=localStorage.getItem('sp_correo_usuario')||sessionStorage.getItem('sp_correo_usuario');
   if(saved&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(saved)){inp.value=saved;inp.className='inp auto';badge.classList.add('show');badgeTxt.textContent=`Correo recordado: ${saved}`;hint.textContent='✓ Correo guardado de tu sesión anterior';hint.className='field-hint info';return;}
   if(window.PasswordCredential&&navigator.credentials){try{const cred=await navigator.credentials.get({password:true,mediation:'silent'});if(cred&&cred.id&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cred.id)){inp.value=cred.id;inp.className='inp auto';badge.classList.add('show');badgeTxt.textContent=`Correo detectado: ${cred.id}`;hint.textContent='✓ Detectado desde tus credenciales guardadas';hint.className='field-hint info';localStorage.setItem('sp_correo_usuario',cred.id);return;}}catch(_){}}
-  if(window.FederatedCredential&&navigator.credentials){try{const cred=await navigator.credentials.get({federated:{providers:['https://accounts.google.com']},mediation:'silent'});if(cred&&cred.id){inp.value=cred.id;inp.className='inp auto';badge.classList.add('show');badgeTxt.textContent=`Google detectado: ${cred.id}`;hint.textContent='✓ Cuenta Google detectada en el navegador';hint.className='field-hint info';localStorage.setItem('sp_correo_usuario',cred.id);return;}}catch(_){}}
   setTimeout(()=>{const val=inp.value.trim();if(val&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val)&&!badge.classList.contains('show')){inp.className='inp auto';badge.classList.add('show');badgeTxt.textContent=`Correo autocompletado: ${val}`;hint.textContent='✓ Completado por el navegador';hint.className='field-hint info';}},800);
 }
 function guardarCorreoLocal(email){if(email&&/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){localStorage.setItem('sp_correo_usuario',email);sessionStorage.setItem('sp_correo_usuario',email);}}
@@ -285,9 +310,29 @@ async function verificarClienteExistente(telefono){
 async function registrarEnScript(nombre,telefono){
   const correo=gi('correo').value.trim(),nota=gi('nota').value.trim();
   if(correo)guardarCorreoLocal(correo);
-  const payload={nombre,telefono,correo,capital:calcData?.capital??'',dias:calcData?.dias??'',interesPct:calcData?.ip??'',interesM:calcData?.it??'',total:calcData?.tp??'',pagoDiario:calcData?.pd??'',latitud:ubicacion?.lat??'',longitud:ubicacion?.lng??'',direccion:ubicacion?.dir??'',fotoINE:fotoINE??'',fotoComp:fotoCDom??'',notas:nota,fecha:new Date().toLocaleString('es-MX'),estado:'Nuevo'};
+  const payload={
+    nombre,
+    telefono,
+    correo,
+    capital:    calcData?.capital    ?? '',
+    dias:       calcData?.dias       ?? '',
+    interesPct: calcData?.ip         ?? '',
+    interesM:   calcData?.it         ?? '',
+    total:      calcData?.tp         ?? '',
+    pagoDiario: calcData?.pd         ?? '',
+    latitud:    ubicacion?.lat       ?? '',
+    longitud:   ubicacion?.lng       ?? '',
+    direccion:  ubicacion?.dir       ?? '',
+    fotoINE:    fotoINE              ?? '',
+    fotoComprobante: fotoCDom        ?? '',
+    notas:      nota,
+    fecha:      new Date().toLocaleString('es-MX'),
+    estado:     'Nuevo'
+  };
+  console.log('📤 Enviando a Apps Script:', { ...payload, fotoINE: payload.fotoINE ? '[base64...]' : '', fotoComprobante: payload.fotoComprobante ? '[base64...]' : '' });
   const res=await postScript(payload);
-  return res?.success!==false;
+  console.log('📥 Respuesta Apps Script:', res);
+  return res?.success===true;
 }
 
 function construirMensaje(){
@@ -342,19 +387,52 @@ async function enviar(){
   if(errNombre){gi('nombre').className='inp error';gi('hintNombre').textContent=errNombre;gi('hintNombre').className='field-hint err';gi('nombre').focus();toast('Verifica tu nombre','err');return;}
   if(errTel){gi('telefono').className='inp error';gi('hintTelefono').textContent=errTel;gi('hintTelefono').className='field-hint err';gi('telefono').focus();toast('Verifica tu teléfono','err');return;}
   if(errCorreo){gi('correo').className='inp error';gi('hintCorreo').textContent=errCorreo;gi('hintCorreo').className='field-hint err';gi('correo').focus();toast('Correo inválido','err');return;}
-  enviando=true;const fab=gi('fab');fab.classList.add('sending');fab.disabled=true;
+
+  enviando=true;
+  const fab=gi('fab');
+  fab.classList.add('sending');
+  fab.disabled=true;
+
   try{
-    setProgress(30);toast('Registrando solicitud en base de datos…','ok');
-    await registrarEnScript(nombre,telefono);
-    setProgress(70);
+    setProgress(20);
+    toast('Registrando solicitud…');
+
+    // Registrar en Google Sheets vía Apps Script
+    let registrado = false;
+    try {
+      setProgress(40);
+      registrado = await registrarEnScript(nombre, telefono);
+    } catch(regErr) {
+      console.error('Error registrando:', regErr);
+    }
+
+    if(registrado){
+      toast('✅ Guardado en base de datos','ok');
+    } else {
+      // No bloquear — igual abrimos WhatsApp
+      toast('⚠️ No se guardó en BD, pero se enviará por WhatsApp');
+      console.warn('registrarEnScript retornó false o null');
+    }
+
+    setProgress(75);
     const msg=construirMensaje();
     const waUrl=`https://wa.me/${adminPhone}?text=${encodeURIComponent(msg)}`;
-    toast('Abriendo WhatsApp…','ok');
-    await new Promise(r=>setTimeout(r,500));
+
+    await new Promise(r=>setTimeout(r,600));
     window.open(waUrl,'_blank');
-    setProgress(100);toast('✅ Solicitud enviada correctamente','ok');
-    setTimeout(()=>{setProgress(0);window.location.href='index.html';},3000);
-  }finally{enviando=false;fab.classList.remove('sending');fab.disabled=false;}
+
+    setProgress(100);
+    toast('✅ Solicitud enviada correctamente','ok');
+    setTimeout(()=>{setProgress(0);window.location.href='index.html';},3200);
+
+  }catch(e){
+    console.error('Error en enviar():', e);
+    toast('Error: '+e.message,'err');
+  }finally{
+    enviando=false;
+    fab.classList.remove('sending');
+    fab.disabled=false;
+  }
 }
 
 function init(){
